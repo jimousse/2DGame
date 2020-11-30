@@ -6,8 +6,8 @@ module.exports = [
 		entry: './src/index.js',
 		devtool: 'inline-source-map',
 		output: {
-			filename: 'example.js',
-			path: path.resolve(__dirname, 'src')
+			filename: 'main.js',
+			path: path.resolve(__dirname, 'docs')
 		},
 		module: {
 			rules: [
@@ -24,7 +24,7 @@ module.exports = [
 			]
 		},
 		devServer: {
-			contentBase: './src'
+			contentBase: './docs'
 		}
 	}
 ];

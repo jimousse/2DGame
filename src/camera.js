@@ -4,7 +4,7 @@ const CAMERA_SPEED = 2;
  * map - instance of GameMap
  */
 class Camera {
-  constructor(map, width, height) {
+  constructor(width, height) {
     this.x = width/2;
     this.y = height/2;
     this.width = width;
@@ -16,32 +16,26 @@ class Camera {
       up: false,
       down: false
     };
-    this.maxX = map.cols * map.size - width;
-    this.maxY = map.rows * map.size - height;
   }
 
   moveRight() {
-    if (!this.stop.right) {
-      this.x += CAMERA_SPEED;
-    }
+    if (this.stop.right) return;
+    this.x += CAMERA_SPEED;
   }
 
   moveLeft() {
-    if (!this.stop.left) {
-      this.x -= CAMERA_SPEED;
-    }
+    if (this.stop.left) return;
+    this.x -= CAMERA_SPEED;
   }
 
   moveUp() {
-    if (!this.stop.up) {
-      this.y -= CAMERA_SPEED;
-    }
+    if (this.stop.up) return;
+    this.y -= CAMERA_SPEED;
   }
 
   moveDown() {
-    if (!this.stop.down) {
-      this.y += CAMERA_SPEED;
-    }
+    if (this.stop.down) return;
+    this.y += CAMERA_SPEED;
   }
 
   reset() {

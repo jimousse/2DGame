@@ -12,7 +12,7 @@ const map = new GameMap({
   ...TREES,
   onLoadCallback: () => { display.resize(); }
 });
-const camera = new Camera(map, CAMERA_SIZE, CAMERA_SIZE);
+const camera = new Camera(CAMERA_SIZE, CAMERA_SIZE);
 const player = new Player({
   assetInfo: PLAYER,
   onLoadCallback: render

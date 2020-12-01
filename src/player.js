@@ -1,4 +1,6 @@
 import { ACTIONS } from './constants.js';
+import { FrameAnimator } from './frame-animator.js';
+import { ImageLoader } from './mixins/index.js';
 const {
 	WALK_UP,
 	WALK_DOWN,
@@ -10,20 +12,13 @@ const {
 	IDLE_LEFT
 } = ACTIONS;
 
-export default class Player {
-	constructor(size, camera, map) {
-		this.screenX = camera.width/2 - size;
-		this.screenY = camera.height/2 - size;
-		this.camera = camera;
-		this.map = map;
-		this.width = size;
-		this.height =  size;
+export default class Player extends ImageLoader {
+	constructor({ assetInfo, onLoadCallback }) {
+		super(assetInfo.src, onLoadCallback);
+		this.width = assetInfo.size;
+		this.height =  assetInfo.size;
 		this._init();
-	}
-
-	update() {
-		this.x = this.screenX + this.camera.x;
-		this.y = this.screenY + this.camera.y;
+		this._frameAnimator = new FrameAnimator(assetInfo, this._state);
 	}
 
 
@@ -43,13 +38,6 @@ export default class Player {
 		this._updateState(WALK_DOWN);
 	}
 
-	getScreenCoordinate() {
-		return {
-			x: this.x - this.camera.x,
-			y: this.y - this.camera.y
-		};
-	}
-
 	_init() {
 		this._state = {
 			action: IDLE_DOWN.name,
@@ -58,8 +46,6 @@ export default class Player {
 		for (const action of Object.values(ACTIONS)) {
 			this._state.actionSequenceIndex[action.name] = 0;
 		}
-		this.x = this.screenX + this.camera.x;
-		this.y = this.screenY + this.camera.y;
 	}
 
 	_updateState(currentAction) {
@@ -80,6 +66,11 @@ export default class Player {
 			action: this._state.action,
 			sequenceIndex: this._state.actionSequenceIndex[this._state.action]
 		};
+	}
+
+	getCurrentFrame() {
+		const { action, sequenceIndex } = this.getMoveState();
+		return this._frameAnimator.getCurrentFrame(action, sequenceIndex);
 	}
 
 	face(direction) {

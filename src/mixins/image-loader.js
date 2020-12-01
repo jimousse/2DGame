@@ -1,11 +1,8 @@
 class ImageLoader {
-  constructor({ src }) {
+  constructor(src, onLoadCallback) {
     this._image = new Image();
     this._image.src = src;
-  }
-
-  setOnLoad(callback) {
-    this._image.onload = callback;
+    this._image.onload = onLoadCallback;
   }
 
   getImage() {

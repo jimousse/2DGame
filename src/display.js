@@ -10,31 +10,31 @@ class Display {
     this.buffer.canvas.height = canvasHeight;
   }
 
-  drawPlayer(image, tile, position) {
+  drawPlayer({ image, frame, x, y, width, height }) {
     this.buffer.drawImage(
       image,
-      ...tile,
-      position.x,
-      position.y,
-      position.width,
-      position.height
+      ...frame,
+      x,
+      y,
+      width,
+      height
     );
     this._render();
   }
 
   drawMap(layer) {
     const image = this._map.getImage();
-    const tileSize = this._map.tsize;
+    const tileSize = this._map.size;
 
-    const startCol = Math.floor(this.camera.x / this._map.tsize);
-    const endCol = startCol + Math.floor(this.camera.width / this._map.tsize) + 1;
-    const startRow = Math.floor(this.camera.y / this._map.tsize);
-    const endRow = startRow + Math.floor(this.camera.height / this._map.tsize) + 1;
+    const startCol = Math.floor(this.camera.x / tileSize);
+    const endCol = startCol + Math.floor(this.camera.width / tileSize) + 1;
+    const startRow = Math.floor(this.camera.y / tileSize);
+    const endRow = startRow + Math.floor(this.camera.height / tileSize) + 1;
 
     for (let col = startCol; col <= endCol; col++) {
       for (let row = startRow; row <= endRow; row++) {
-        var x = col * this._map.tsize - this.camera.x;
-        var y = row * this._map.tsize - this.camera.y;
+        var x = col * tileSize - this.camera.x;
+        var y = row * tileSize - this.camera.y;
         const currentTile = this._map.getTile(layer, col, row);
         if (currentTile === 0) continue;
         this.buffer.drawImage(

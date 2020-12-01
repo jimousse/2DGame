@@ -16,8 +16,8 @@ class Camera {
       up: false,
       down: false
     };
-    this.maxX = map.cols * map.tsize - width;
-    this.maxY = map.rows * map.tsize - height;
+    this.maxX = map.cols * map.size - width;
+    this.maxY = map.rows * map.size - height;
   }
 
   moveRight() {

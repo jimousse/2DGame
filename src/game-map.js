@@ -4,20 +4,9 @@ const BORDER_LENGTH = 4;
 const BORDER_CONTENT = 6;
 
 class GameMap extends ImageLoader {
-	constructor({
-		src,
-		cols,
-		rows,
-		playableArea,
-		...rest
-	}) {
-		super({ src });
-		this.playableArea = playableArea;
-		this.playableDimension = {
-			rows,
-			cols
-		};
-		for (const [ prop, value ] of Object.entries(rest)) {
+	constructor(params) {
+		super(params.src, params.onLoadCallback);
+		for (const [ prop, value ] of Object.entries(params)) {
 			if (value === undefined) continue;
 			this[prop] = value;
 		}
@@ -30,11 +19,11 @@ class GameMap extends ImageLoader {
 	}
 
 	get width() {
-		return this.tsize * this.rows;
+		return this.size * this.rows;
 	}
 
 	get height() {
-		return this.tsize * this.cols;
+		return this.size * this.cols;
 	}
 
 	/**
@@ -43,10 +32,9 @@ class GameMap extends ImageLoader {
 	 * - a border, non playable around the playable area
 	 */
 	_buildCompleteMap() {
-		const { rows, cols } = this.playableDimension;
-		this.layers = [ this._addBorder(this.playableArea, rows, cols, BORDER_LENGTH, BORDER_CONTENT) ];
-		this.rows = rows + 2 * BORDER_LENGTH; // new number of rows of the full map
-		this.cols = cols + 2 * BORDER_LENGTH; // new number of columns of the full map
+		this.layers = [ this._addBorder(this.playableArea, this.rows, this.cols, BORDER_LENGTH, BORDER_CONTENT) ];
+		this.rows = this.rows + 2 * BORDER_LENGTH; // new number of rows of the full map
+		this.cols = this.cols + 2 * BORDER_LENGTH; // new number of columns of the full map
 		this._buildTopLayer();
 	}
 
@@ -62,12 +50,11 @@ class GameMap extends ImageLoader {
 	}
 
 	_buildColisionMap() {
-		const { rows, cols } = this.playableDimension;
 		let playableAreaCollisionMap = this.playableArea.map(e => {
 			if (e === 3) return  1;
 			return 0;
 		});
-		this._collisionMap = this._addBorder(playableAreaCollisionMap, rows, cols, BORDER_LENGTH, 1);
+		this._collisionMap = this._addBorder(playableAreaCollisionMap, this.rows, this.cols, BORDER_LENGTH, 1);
 	}
 
 	/**
@@ -77,8 +64,8 @@ class GameMap extends ImageLoader {
 	 * @param {*} y
 	 */
 	collision(x, y) {
-		const col = Math.floor(x / this.tsize);
-		const row = Math.floor(y / this.tsize);
+		const col = Math.floor(x / this.size);
+		const row = Math.floor(y / this.size);
 		return this._collisionMap[row * this.cols + col];
 	}
 

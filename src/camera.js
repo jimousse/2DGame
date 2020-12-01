@@ -44,11 +44,6 @@ class Camera {
     this.stop.up = false;
     this.stop.down = false;
   }
-
-  isIdle() {
-    return this._idle;
-  }
-
 }
 
 export default Camera;

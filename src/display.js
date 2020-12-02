@@ -63,6 +63,9 @@ class Display {
       this.context.canvas.height = this._height;
       this.context.canvas.width = this._height / ratio;
     }
+    // not sure if I really need to do that...
+    this.context.canvas.style.height = `${this.context.canvas.height}px`;
+    this.context.canvas.style.width = `${this.context.canvas.width}px`;
     this.context.imageSmoothingEnabled = true;
   }
 

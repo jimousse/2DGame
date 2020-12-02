@@ -5,8 +5,17 @@
     <script type="module" src="./main.js"></script>
   </head>
 
+  <style>
+    #game-container {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+
   <body>
-    <canvas id="game"></canvas>
-    <virtual-controller radius="200"></virtual-controller>
+    <div id="game-container">
+      <canvas id="game"></canvas>
+      <virtual-controller radius="200"></virtual-controller>
+    </div>
   </body>
 </html>

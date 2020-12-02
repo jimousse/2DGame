@@ -3,9 +3,7 @@ class Display {
     this.buffer  = document.createElement('canvas').getContext('2d'),
     this.context = canvas.getContext('2d');
     this._map = map;
-    this._width = canvasWidth;
     this.camera = camera;
-    this._height = canvasHeight;
     this.buffer.canvas.width = canvasWidth;
     this.buffer.canvas.height = canvasHeight;
   }
@@ -55,14 +53,11 @@ class Display {
 
 
   resize() {
-    const ratio = this._map.height / this._map.width;
-    if (this._height / this._width > ratio) {
-      this.context.canvas.height = this._width * ratio;
-      this.context.canvas.width = this._width;
-    } else {
-      this.context.canvas.height = this._height;
-      this.context.canvas.width = this._height / ratio;
-    }
+    const MAX_SIZE = 1000;
+    // gotta fix this caca
+    const size = Math.min(MAX_SIZE, Math.min(document.documentElement.clientWidth - 20, document.documentElement.clientHeight - 20));
+    this.context.canvas.height = size;
+    this.context.canvas.width = size;
     // not sure if I really need to do that...
     this.context.canvas.style.height = `${this.context.canvas.height}px`;
     this.context.canvas.style.width = `${this.context.canvas.width}px`;

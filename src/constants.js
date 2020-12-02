@@ -33,5 +33,3 @@ export const ACTIONS = {
     length: 1
   }
 };
-
-export const CONSTANT_SPEED = 3;

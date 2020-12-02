@@ -41,6 +41,14 @@ class Controller {
     return this.down.down;
   }
 
+  setDirectionActive(direction) {
+    this[direction].down = true;
+  }
+
+  setDirectionInactive(direction) {
+    this[direction].down = false;
+  }
+
   isIdle() {
     return !this.isDownActive() && !this.isUpActive() && !this.isRightActive() && !this.isLeftActive();
   }
@@ -48,6 +56,10 @@ class Controller {
   plug() {
     window.addEventListener('keydown', this.setKeyDown.bind(this));
     window.addEventListener('keyup', this.setKeyDown.bind(this));
+    window.addEventListener('controller-mousedown', (e) => { this.setDirectionActive(e.detail.direction); });
+    window.addEventListener('controller-mouseup', (e) => { this.setDirectionInactive(e.detail.direction); });
+    window.addEventListener('controller-touchstart', (e) => { this.setDirectionActive(e.detail.direction); });
+    window.addEventListener('controller-touchend', (e) => { this.setDirectionInactive(e.detail.direction); });
   }
 }
 

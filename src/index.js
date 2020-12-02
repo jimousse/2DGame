@@ -6,6 +6,7 @@ import Controller from './controller.js';
 import GameMap  from './game-map.js';
 import Camera  from './camera.js';
 import { TREES, PLAYER } from './asset-info.js';
+import './components/virtual-controller.js';
 const CAMERA_SIZE = 512;
 const controller = new Controller();
 const map = new GameMap({
@@ -45,7 +46,7 @@ const update = () => {
 };
 
 const engine = new Engine(render, update);
-const canvas = document.querySelector('canvas');
+const canvas = document.querySelector('#game');
 const display = new Display(canvas, map, camera, CAMERA_SIZE, CAMERA_SIZE);
 
 

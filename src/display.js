@@ -23,7 +23,6 @@ class Display {
   drawMap(layer) {
     const image = this._map.getImage();
     const tileSize = this._map.size;
-
     const startCol = Math.floor(this.camera.x / tileSize);
     const endCol = startCol + Math.floor(this.camera.width / tileSize) + 1;
     const startRow = Math.floor(this.camera.y / tileSize);

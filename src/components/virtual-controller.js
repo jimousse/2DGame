@@ -86,8 +86,14 @@ class VirtualController extends LitElement {
           <rect
             @mousedown=${(e) => {this._mouseDownHandler(e, b.dir);}}
             @mouseup=${(e) => {this._mouseUpHandler(e, b.dir);}}
-            @touchstart=${(e) => {this._mouseDownHandler(e, b.dir);}}
-            @touchend=${(e) => {this._mouseUpHandler(e, b.dir);}}
+            @touchstart=${(e) => {
+              e.preventDefault();
+              this._mouseDownHandler(e, b.dir);
+            }}
+            @touchend=${(e) => {
+              e.preventDefault();
+              this._mouseUpHandler(e, b.dir);
+            }}
             clip-path="url(#circle-clip)"
             x="${b.x}"
             y="${b.y}"

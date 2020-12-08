@@ -16,8 +16,8 @@ class VirtualController extends LitElement {
     this._defaultOpacity = 0.7;
   }
 
-  _mouseDownHandler(event, buttonId) {
-    switch (buttonId) {
+  _mouseDownHandler(event, dir) {
+    switch (dir) {
       case 'left':
         this.clickHandlers.left.mouseDown();
         break;
@@ -34,11 +34,14 @@ class VirtualController extends LitElement {
       default:
         break;
     }
-    event.target.setAttribute('opacity', this._clickedOpacity);
+
+    if (dir !== 'center') {
+      event.target.setAttribute('opacity', this._clickedOpacity);
+    }
   }
 
-  _mouseUpHandler(event, buttonId) {
-    switch (buttonId) {
+  _mouseUpHandler(event, dir) {
+    switch (dir) {
       case 'left':
         this.clickHandlers.left.mouseUp();
         break;
@@ -55,7 +58,9 @@ class VirtualController extends LitElement {
       default:
         break;
     }
-    event.target.setAttribute('opacity', this._defaultOpacity);
+    if (dir !== 'center') {
+      event.target.setAttribute('opacity', this._defaultOpacity);
+    }
   }
 
   render() {
@@ -63,11 +68,11 @@ class VirtualController extends LitElement {
     const svgHeight = 2*this.radius;
     const buttonSize = svgHeight/3;
     const buttons = [
-      { id: 'up', x: svgWidth/3, y: 0, fill: '#696969', filterId: "shadow", opacity: this._defaultOpacity },
-      { id: 'down', x: svgWidth/3, y: 2*svgHeight/3, fill: '#696969', filterId: "shadow", opacity: this._defaultOpacity },
-      { id: 'right', x: 2*svgWidth/3, y: svgHeight/3, fill: '#696969', filterId: "shadow", opacity: this._defaultOpacity },
-      { id: 'left', x: 0, y: svgHeight/3, fill: '#696969', filterId: "shadow", opacity: this._defaultOpacity },
-      { id: 'center', x: svgWidth/3, y: svgWidth/3, fill: '#515151', opacity: 1 }
+      { dir: 'up', x: svgWidth/3, y: 0, fill: '#696969' },
+      { dir: 'down', x: svgWidth/3, y: 2*svgHeight/3, fill: '#696969' },
+      { dir: 'right', x: 2*svgWidth/3, y: svgHeight/3, fill: '#696969' },
+      { dir: 'left', x: 0, y: svgHeight/3, fill: '#696969' },
+      { dir: 'center', x: svgWidth/3, y: svgWidth/3, fill: '#515151' }
     ];
     return svg`
       <svg
@@ -76,35 +81,22 @@ class VirtualController extends LitElement {
         height="${svgHeight}"
       >
         <defs>
-          <filter id="shadow">
-            <feDropShadow
-              dx="0.2"
-              dy="0.2"
-              stdDeviation="1"
-            />
-          </filter>
           <clipPath id="circle-clip">
-            <circle
-              cx="${svgWidth/2}"
-              cy="${svgHeight/2}"
-              r="${this.radius}"
-            />
+            <circle cx="${svgWidth/2}" cy="${svgHeight/2}" r="${this.radius}" />
           </clipPath>
       </defs>
       <circle opacity="0.4" cx="${svgWidth/2}" cy="${svgHeight/2}" r="${this.radius}" />
       ${buttons.map(b =>
         svg`
           <rect
-            @mousedown=${(e) => {this._mouseDownHandler(e, b.id);}}
-            @mouseup=${(e) => {this._mouseUpHandler(e, b.id);}}
-            @touchstart=${(e) => {this._mouseDownHandler(e, b.id);}}
-            @touchend=${(e) => {this._mouseUpHandler(e, b.id);}}
+            @mousedown=${(e) => {this._mouseDownHandler(e, b.dir);}}
+            @mouseup=${(e) => {this._mouseUpHandler(e, b.dir);}}
+            @touchstart=${(e) => {this._mouseDownHandler(e, b.dir);}}
+            @touchend=${(e) => {this._mouseUpHandler(e, b.dir);}}
             clip-path="url(#circle-clip)"
-            filter="url(#${b.filterId})"
-            id="${b.id}"
             x="${b.x}"
             y="${b.y}"
-            opacity="${b.opacity}"
+            opacity="${this._defaultOpacity}"
             width="${buttonSize}"
             height="${buttonSize}"
             fill="${b.fill}"

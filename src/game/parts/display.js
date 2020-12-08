@@ -52,12 +52,6 @@ class Display {
 
 
   resize() {
-    const MAX_SIZE = 1000;
-    // gotta fix this caca
-    const size = Math.min(MAX_SIZE, Math.min(document.documentElement.clientWidth - 20, document.documentElement.clientHeight - 20));
-    this.context.canvas.height = size;
-    this.context.canvas.width = size;
-    // not sure if I really need to do that...
     this.context.canvas.style.height = `${this.context.canvas.height}px`;
     this.context.canvas.style.width = `${this.context.canvas.width}px`;
     this.context.imageSmoothingEnabled = true;

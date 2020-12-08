@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit-element';
+import { LitElement, html, css } from 'lit-element';
 import { GameInterface } from '../game/game-interface.js';
 
 const KEYS = {
@@ -11,6 +11,8 @@ const KEYS = {
 class CoolGame extends LitElement {
   constructor() {
     super();
+    this._margin = 10;
+    this._controllerRadius = 100;
     this.canvas = this.shadowRoot.getElementById('game-canvas');
     this._controllerClickHandlers = {
       right: {
@@ -32,8 +34,17 @@ class CoolGame extends LitElement {
     };
   }
 
+  static get styles() {
+    return css`
+      virtual-controller {
+        position: absolute;
+      }
+    `;
+  }
+
   connectedCallback() {
     super.connectedCallback();
+    this._canvasSize = Math.min(document.documentElement.clientWidth - 2 * this._margin, document.documentElement.clientHeight - 2 * this._margin);
     window.addEventListener('keydown', ({ key }) => {
       switch (key) {
         case KEYS.ARROW_LEFT:
@@ -64,9 +75,17 @@ class CoolGame extends LitElement {
 
   render() {
     return html`
-      <div id="game-container">
-        <canvas id="game-canvas"></canvas>
-        <virtual-controller radius="200" .clickHandlers=${this._controllerClickHandlers}>
+      <div>
+        <canvas
+          id="game-canvas"
+          height="${this._canvasSize}px"
+          width="${this._canvasSize}px"
+          style="margin: ${this._margin}px"
+        ></canvas>
+        <virtual-controller
+          radius=${this._controllerRadius}
+          style="top: ${this._canvasSize - 2*this._controllerRadius}px; left: ${this._canvasSize - 2*this._controllerRadius}px;"
+          .clickHandlers=${this._controllerClickHandlers}>
         </virtual-controller>
       </div>
     `;

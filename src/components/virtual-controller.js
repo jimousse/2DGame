@@ -1,4 +1,4 @@
-import { LitElement, svg } from 'lit-element';
+import { LitElement, svg, css } from 'lit-element';
 
 class VirtualController extends LitElement {
 
@@ -7,6 +7,18 @@ class VirtualController extends LitElement {
       radius: { type: Number },
       clickHandlers: { type: Object }
     };
+  }
+
+  static get styles() {
+    return css`
+      .button-direction {
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    `;
   }
 
   constructor() {
@@ -84,16 +96,11 @@ class VirtualController extends LitElement {
       ${buttons.map(b =>
         svg`
           <rect
-            @mousedown=${(e) => {this._mouseDownHandler(e, b.dir);}}
-            @mouseup=${(e) => {this._mouseUpHandler(e, b.dir);}}
-            @touchstart=${(e) => {
-              e.preventDefault();
-              this._mouseDownHandler(e, b.dir);
-            }}
-            @touchend=${(e) => {
-              e.preventDefault();
-              this._mouseUpHandler(e, b.dir);
-            }}
+            class="button-direction"
+            @mousedown=${(e) => { this._mouseDownHandler(e, b.dir); }}
+            @mouseup=${(e) => { this._mouseUpHandler(e, b.dir); }}
+            @touchstart=${(e) => { this._mouseDownHandler(e, b.dir); }}
+            @touchend=${(e) => { this._mouseUpHandler(e, b.dir); }}
             clip-path="url(#circle-clip)"
             x="${b.x}"
             y="${b.y}"

@@ -1,4 +1,4 @@
-import { ImageLoader } from './mixins/index.js';
+import { ImageLoader } from '../mixins/index.js';
 
 const BORDER_LENGTH = 4;
 const BORDER_CONTENT = 6;

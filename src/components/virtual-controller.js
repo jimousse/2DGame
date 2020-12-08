@@ -4,7 +4,8 @@ class VirtualController extends LitElement {
 
   static get properties() {
     return {
-      radius: { type: Number }
+      radius: { type: Number },
+      clickHandlers: { type: Object }
     };
   }
 
@@ -13,6 +14,48 @@ class VirtualController extends LitElement {
     this.radius = 50;
     this._clickedOpacity = 1;
     this._defaultOpacity = 0.7;
+  }
+
+  _mouseDownHandler(event, buttonId) {
+    switch (buttonId) {
+      case 'left':
+        this.clickHandlers.left.mouseDown();
+        break;
+      case 'right':
+        this.clickHandlers.right.mouseDown();
+        break;
+      case 'down':
+        this.clickHandlers.down.mouseDown();
+        break;
+      case 'up':
+        this.clickHandlers.up.mouseDown();
+        break;
+
+      default:
+        break;
+    }
+    event.target.setAttribute('opacity', this._clickedOpacity);
+  }
+
+  _mouseUpHandler(event, buttonId) {
+    switch (buttonId) {
+      case 'left':
+        this.clickHandlers.left.mouseUp();
+        break;
+      case 'right':
+        this.clickHandlers.right.mouseUp();
+        break;
+      case 'down':
+        this.clickHandlers.down.mouseUp();
+        break;
+      case 'up':
+        this.clickHandlers.up.mouseUp();
+        break;
+
+      default:
+        break;
+    }
+    event.target.setAttribute('opacity', this._defaultOpacity);
   }
 
   render() {
@@ -52,46 +95,10 @@ class VirtualController extends LitElement {
       ${buttons.map(b =>
         svg`
           <rect
-            @mousedown=${(e) => {
-              let customEvent = new CustomEvent('controller-mousedown', {
-                detail: {
-                  direction: b.id
-                },
-                bubbles: true
-              });
-              e.target.setAttribute('opacity', this._clickedOpacity);
-              this.dispatchEvent(customEvent);
-            }}
-            @mouseup=${(e) => {
-              let customEvent = new CustomEvent('controller-mouseup', {
-                detail: {
-                  direction: b.id
-                },
-                bubbles: true
-              });
-              e.target.setAttribute('opacity', this._defaultOpacity);
-              this.dispatchEvent(customEvent);
-            }}
-            @touchstart=${(e) => {
-              let customEvent = new CustomEvent('controller-touchstart', {
-                detail: {
-                  direction: b.id
-                },
-                bubbles: true
-              });
-              e.target.setAttribute('opacity', this._clickedOpacity);
-              this.dispatchEvent(customEvent);
-            }}
-            @touchend=${(e) => {
-              let customEvent = new CustomEvent('controller-touchend', {
-                detail: {
-                  direction: b.id
-                },
-                bubbles: true
-              });
-              e.target.setAttribute('opacity', this._defaultOpacity);
-              this.dispatchEvent(customEvent);
-            }}
+            @mousedown=${(e) => {this._mouseDownHandler(e, b.id);}}
+            @mouseup=${(e) => {this._mouseUpHandler(e, b.id);}}
+            @touchstart=${(e) => {this._mouseDownHandler(e, b.id);}}
+            @touchend=${(e) => {this._mouseUpHandler(e, b.id);}}
             clip-path="url(#circle-clip)"
             filter="url(#${b.filterId})"
             id="${b.id}"

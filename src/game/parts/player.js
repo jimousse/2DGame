@@ -1,6 +1,6 @@
 import { ACTIONS } from './constants.js';
-import { FrameAnimator } from './frame-animator.js';
-import { ImageLoader } from './mixins/index.js';
+import FrameAnimator from './frame-animator.js';
+import { ImageLoader } from '../mixins/index.js';
 const {
 	WALK_UP,
 	WALK_DOWN,

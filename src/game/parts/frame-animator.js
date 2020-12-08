@@ -1,6 +1,6 @@
-const DELAY = 7;
+const DELAY = 5;
 
-export class FrameAnimator {
+class FrameAnimator {
   constructor(assetInfo, initialState) {
     for (const [ prop, value ] of Object.entries(assetInfo)) {
       if (value === undefined) continue;
@@ -37,5 +37,6 @@ export class FrameAnimator {
     this._count++;
     return this._currentFrame;
   }
-
 }
+
+export default FrameAnimator;

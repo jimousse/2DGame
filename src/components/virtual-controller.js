@@ -23,9 +23,9 @@ class VirtualController extends LitElement {
 
   constructor() {
     super();
-    this.radius = 50;
     this._clickedOpacity = 1;
     this._defaultOpacity = 0.4;
+    this._fill = '#f7ede2';
   }
 
   _mouseDownHandler(event, dir) {
@@ -77,10 +77,10 @@ class VirtualController extends LitElement {
     const svgHeight = 2*this.radius;
     const buttonSize = svgHeight/3;
     const buttons = [
-      { dir: 'up', x: svgWidth/3, y: 0, fill: '#696969' },
-      { dir: 'down', x: svgWidth/3, y: 2*svgHeight/3, fill: '#696969' },
-      { dir: 'right', x: 2*svgWidth/3, y: svgHeight/3, fill: '#696969' },
-      { dir: 'left', x: 0, y: svgHeight/3, fill: '#696969' }
+      { dir: 'up', x: svgWidth/3, y: 0 },
+      { dir: 'down', x: svgWidth/3, y: 2*svgHeight/3 },
+      { dir: 'right', x: 2*svgWidth/3, y: svgHeight/3 },
+      { dir: 'left', x: 0, y: svgHeight/3 }
     ];
     return svg`
       <svg
@@ -107,7 +107,7 @@ class VirtualController extends LitElement {
             opacity="${this._defaultOpacity}"
             width="${buttonSize}"
             height="${buttonSize}"
-            fill="${b.fill}"
+            fill="${this._fill}"
           />
         `
       )}

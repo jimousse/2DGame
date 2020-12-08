@@ -12,7 +12,6 @@ class CoolGame extends LitElement {
   constructor() {
     super();
     this._margin = 10;
-    this._controllerRadius = 250;
     this.canvas = this.shadowRoot.getElementById('game-canvas');
     this._controllerClickHandlers = {
       right: {
@@ -74,6 +73,7 @@ class CoolGame extends LitElement {
   }
 
   render() {
+    const controllerRadius = this._canvasSize/5; // just trying 🤷🏻‍♂️
     return html`
       <div>
         <canvas
@@ -83,8 +83,8 @@ class CoolGame extends LitElement {
           style="margin: ${this._margin}px"
         ></canvas>
         <virtual-controller
-          radius=${this._controllerRadius}
-          style="top: ${this._canvasSize - 2*this._controllerRadius}px; left: ${this._canvasSize - 2*this._controllerRadius}px;"
+          radius=${controllerRadius}
+          style="top: ${this._canvasSize - 2*controllerRadius}px; left: ${this._canvasSize - 2*controllerRadius}px;"
           .clickHandlers=${this._controllerClickHandlers}>
         </virtual-controller>
       </div>

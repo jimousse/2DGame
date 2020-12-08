@@ -13,7 +13,7 @@ class VirtualController extends LitElement {
     super();
     this.radius = 50;
     this._clickedOpacity = 1;
-    this._defaultOpacity = 0.7;
+    this._defaultOpacity = 0.4;
   }
 
   _mouseDownHandler(event, dir) {
@@ -35,9 +35,7 @@ class VirtualController extends LitElement {
         break;
     }
 
-    if (dir !== 'center') {
-      event.target.setAttribute('opacity', this._clickedOpacity);
-    }
+    event.target.setAttribute('opacity', this._clickedOpacity);
   }
 
   _mouseUpHandler(event, dir) {
@@ -58,9 +56,8 @@ class VirtualController extends LitElement {
       default:
         break;
     }
-    if (dir !== 'center') {
-      event.target.setAttribute('opacity', this._defaultOpacity);
-    }
+
+    event.target.setAttribute('opacity', this._defaultOpacity);
   }
 
   render() {
@@ -71,8 +68,7 @@ class VirtualController extends LitElement {
       { dir: 'up', x: svgWidth/3, y: 0, fill: '#696969' },
       { dir: 'down', x: svgWidth/3, y: 2*svgHeight/3, fill: '#696969' },
       { dir: 'right', x: 2*svgWidth/3, y: svgHeight/3, fill: '#696969' },
-      { dir: 'left', x: 0, y: svgHeight/3, fill: '#696969' },
-      { dir: 'center', x: svgWidth/3, y: svgWidth/3, fill: '#515151' }
+      { dir: 'left', x: 0, y: svgHeight/3, fill: '#696969' }
     ];
     return svg`
       <svg
@@ -85,7 +81,6 @@ class VirtualController extends LitElement {
             <circle cx="${svgWidth/2}" cy="${svgHeight/2}" r="${this.radius}" />
           </clipPath>
       </defs>
-      <circle opacity="0.4" cx="${svgWidth/2}" cy="${svgHeight/2}" r="${this.radius}" />
       ${buttons.map(b =>
         svg`
           <rect

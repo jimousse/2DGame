@@ -12,7 +12,7 @@ class CoolGame extends LitElement {
   constructor() {
     super();
     this._margin = 10;
-    this._controllerRadius = 100;
+    this._controllerRadius = 250;
     this.canvas = this.shadowRoot.getElementById('game-canvas');
     this._controllerClickHandlers = {
       right: {

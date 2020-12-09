@@ -61,11 +61,6 @@ class Display {
       this.context.canvas.height
     );
   }
-
-  set map(value) {
-    this._map = value;
-  }
-
 }
 
 export default Display;

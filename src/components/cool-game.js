@@ -1,18 +1,10 @@
 import { LitElement, html, css } from 'lit-element';
 import { GameInterface } from '../game/game-interface.js';
-
-const KEYS = {
-  ARROW_RIGHT: 'ArrowRight',
-  ARROW_LEFT: 'ArrowLeft',
-  ARROW_UP: 'ArrowUp',
-  ARROW_DOWN: 'ArrowDown'
-};
-
+import { KEYS } from './constants';
 class CoolGame extends LitElement {
   constructor() {
     super();
     this._margin = 10;
-    this.canvas = this.shadowRoot.getElementById('game-canvas');
     this._controllerClickHandlers = {
       right: {
         mouseDown: () => { this.gameInterface.playerGoRight();},
@@ -35,7 +27,7 @@ class CoolGame extends LitElement {
 
   static get styles() {
     return css`
-      virtual-controller {
+      .on-screen-controller {
         position: absolute;
       }
     `;
@@ -43,7 +35,10 @@ class CoolGame extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._canvasSize = Math.min(document.documentElement.clientWidth - 2 * this._margin, document.documentElement.clientHeight - 2 * this._margin);
+    this._canvasSize = Math.min(
+      document.documentElement.clientWidth - 2 * this._margin,
+      document.documentElement.clientHeight - 2 * this._margin
+    );
     window.addEventListener('keydown', ({ key }) => {
       switch (key) {
         case KEYS.ARROW_LEFT:
@@ -62,7 +57,9 @@ class CoolGame extends LitElement {
     });
     window.addEventListener('keyup', ({ key }) => {
       const directionalKeys = [ KEYS.ARROW_LEFT, KEYS.ARROW_RIGHT, KEYS.ARROW_UP, KEYS.ARROW_DOWN ];
-      if (directionalKeys.indexOf(key) >= 0) this.gameInterface.playerStop();
+      if (directionalKeys.indexOf(key) >= 0) {
+        this.gameInterface.playerStop();
+      }
     });
   }
 
@@ -74,17 +71,19 @@ class CoolGame extends LitElement {
 
   render() {
     const controllerRadius = this._canvasSize/5; // just trying 🤷🏻‍♂️
+    const contollerTop = this._canvasSize - 2*controllerRadius;
     return html`
       <div>
         <canvas
           id="game-canvas"
           height="${this._canvasSize}px"
           width="${this._canvasSize}px"
-          style="margin: ${this._margin}px"
-        ></canvas>
+          style="margin: ${this._margin}px">
+        </canvas>
         <virtual-controller
+          class="on-screen-controller"
           radius=${controllerRadius}
-          style="top: ${this._canvasSize - 2*controllerRadius}px; left: ${this._canvasSize - 2*controllerRadius}px;"
+          style="top: ${contollerTop}px; left: ${contollerTop}px;"
           .clickHandlers=${this._controllerClickHandlers}>
         </virtual-controller>
       </div>

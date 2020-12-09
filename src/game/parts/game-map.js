@@ -1,5 +1,6 @@
 import { ImageLoader } from '../mixins/index.js';
 
+// the border length should be half of the camera size
 const BORDER_LENGTH = 4;
 const BORDER_CONTENT = 6;
 

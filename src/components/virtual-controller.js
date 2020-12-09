@@ -2,30 +2,19 @@ import { LitElement, svg, css } from 'lit-element';
 
 class VirtualController extends LitElement {
 
-  static get properties() {
-    return {
-      radius: { type: Number },
-      clickHandlers: { type: Object }
-    };
-  }
-
-  static get styles() {
-    return css`
-      .button-direction {
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-    `;
-  }
-
   constructor() {
     super();
     this._clickedOpacity = 1;
     this._defaultOpacity = 0.4;
     this._fill = '#f7ede2';
+  }
+
+
+  static get properties() {
+    return {
+      radius: { type: Number },
+      clickHandlers: { type: Object }
+    };
   }
 
   _mouseDownHandler(event, dir) {

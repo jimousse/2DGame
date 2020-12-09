@@ -48,13 +48,6 @@ class Display {
     }
   }
 
-
-  resize() {
-    // this.context.canvas.style.height = `${this.context.canvas.height}px`;
-    // this.context.canvas.style.width = `${this.context.canvas.width}px`;
-    this.context.imageSmoothingEnabled = true;
-  }
-
   render() {
     this.context.drawImage(
       this.buffer.canvas,

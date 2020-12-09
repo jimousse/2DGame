@@ -23,12 +23,7 @@ export class GameInterface {
     this._camera = new Camera(CAMERA_SIZE, CAMERA_SIZE);
     this._gameMap = new GameMap(TREES);
     this._display = new Display(this.canvas, this._gameMap, this._camera, CAMERA_SIZE, CAMERA_SIZE);
-    this._player = new Player({
-      assetInfo: PLAYER,
-      onLoadCallback: () => {
-        this._render();
-      }
-    });
+    this._player = new Player(PLAYER);
     this._game = new Game(this._gameMap, this._player, this._camera);
     this._engine = new Engine(() => { this._render(); }, () => { this._update(); });
   }

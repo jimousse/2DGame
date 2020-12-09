@@ -13,8 +13,8 @@ const {
 } = ACTIONS;
 
 export default class Player extends ImageLoader {
-	constructor({ assetInfo, onLoadCallback }) {
-		super(assetInfo.src, onLoadCallback);
+	constructor(assetInfo) {
+		super(assetInfo.src);
 		this.width = assetInfo.size;
 		this.height =  assetInfo.size;
 		this._init();

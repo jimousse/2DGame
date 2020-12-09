@@ -1,11 +1,22 @@
 class Display {
   constructor(canvas, map, camera, canvasWidth, canvasHeight) {
-    this.buffer  = document.createElement('canvas').getContext('2d'),
     this.context = canvas.getContext('2d');
     this._map = map;
     this.camera = camera;
-    this.buffer.canvas.width = canvasWidth;
-    this.buffer.canvas.height = canvasHeight;
+    this._createBufferCanvas(canvasWidth, canvasHeight);
+  }
+
+  /**
+   * Creates an offscreen canvas where elements will be drawn
+   * one after the other, before rendering the whole thing on the
+   * onscreen canvas
+   * @param {*} width
+   * @param {*} height
+   */
+  _createBufferCanvas(width, height) {
+    this.buffer  = document.createElement('canvas').getContext('2d'),
+    this.buffer.canvas.width = width;
+    this.buffer.canvas.height = height;
   }
 
   drawPlayer({ image, frame, x, y, width, height }) {

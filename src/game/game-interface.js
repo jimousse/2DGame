@@ -25,7 +25,7 @@ export class GameInterface {
     this._display = new Display(this.canvas, this._gameMap, this._camera, CAMERA_SIZE, CAMERA_SIZE);
     this._player = new Player(PLAYER);
     this._game = new Game(this._gameMap, this._player, this._camera);
-    this._engine = new Engine(() => { this._render(); }, () => { this._update(); });
+    this._engine = new Engine(this._render.bind(this), this._update.bind(this));
   }
 
   _render() {

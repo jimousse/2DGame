@@ -21,12 +21,7 @@ export class GameInterface {
   _init() {
     this._controller = new Controller();
     this._camera = new Camera(CAMERA_SIZE, CAMERA_SIZE);
-    this._gameMap = new GameMap({
-      ...TREES,
-      onLoadCallback: () => {
-        this._display.resize();
-      }
-    });
+    this._gameMap = new GameMap(TREES);
     this._display = new Display(this.canvas, this._gameMap, this._camera, CAMERA_SIZE, CAMERA_SIZE);
     this._player = new Player({
       assetInfo: PLAYER,
@@ -42,6 +37,7 @@ export class GameInterface {
     this._display.drawMap(0);
     this._display.drawPlayer(this._game.getPlayerInfo());
     this._display.drawMap(1);
+    this._display.render();
   }
 
   playerGoLeft() {

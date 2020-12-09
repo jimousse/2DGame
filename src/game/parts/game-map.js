@@ -5,7 +5,7 @@ const BORDER_CONTENT = 6;
 
 class GameMap extends ImageLoader {
 	constructor(params) {
-		super(params.src, params.onLoadCallback);
+		super(params.src);
 		for (const [ prop, value ] of Object.entries(params)) {
 			if (value === undefined) continue;
 			this[prop] = value;

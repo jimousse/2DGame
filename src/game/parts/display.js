@@ -17,7 +17,6 @@ class Display {
       width,
       height
     );
-    this._render();
   }
 
   drawMap(layer) {
@@ -47,17 +46,16 @@ class Display {
         );
       }
     }
-    this._render();
   }
 
 
   resize() {
-    this.context.canvas.style.height = `${this.context.canvas.height}px`;
-    this.context.canvas.style.width = `${this.context.canvas.width}px`;
+    // this.context.canvas.style.height = `${this.context.canvas.height}px`;
+    // this.context.canvas.style.width = `${this.context.canvas.width}px`;
     this.context.imageSmoothingEnabled = true;
   }
 
-  _render() {
+  render() {
     this.context.drawImage(
       this.buffer.canvas,
       0,

@@ -1,5 +1,3 @@
-const DELAY = 5;
-
 class FrameAnimator {
   constructor(assetInfo, initialState) {
     for (const [ prop, value ] of Object.entries(assetInfo)) {
@@ -9,7 +7,7 @@ class FrameAnimator {
     this._frameSets = this._createFrameSets();
     this._currentFrame = this._frameSets[initialState.action][0];
     this._count = 0;
-    this._delay = DELAY;
+    this._delay = assetInfo.delay;
   }
 
   _getTile([ row, col ]) {

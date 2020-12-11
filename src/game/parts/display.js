@@ -1,8 +1,11 @@
+import Ocean from './ocean.js';
+
 class Display {
   constructor(canvas, map, camera, canvasWidth, canvasHeight) {
     this.context = canvas.getContext('2d');
     this._map = map;
     this.camera = camera;
+    this._init();
     this._createBufferCanvas(canvasWidth, canvasHeight);
   }
 
@@ -19,6 +22,13 @@ class Display {
     this.buffer.canvas.height = height;
   }
 
+  _init() {
+    this._mapImage = this._map.getImage();
+    this._tileSize = this._map.size;
+    this._ocean = new Ocean();
+    this._oceanImage = this._ocean.getImage();
+  }
+
   drawPlayer({ image, frame, x, y, width, height }) {
     this.buffer.drawImage(
       image,
@@ -30,31 +40,45 @@ class Display {
     );
   }
 
+  _drawOcean(x, y) {
+    this.buffer.drawImage(
+      this._oceanImage, // image
+      ...this._ocean.getCurrentFrame(),
+      x, // target x
+      y, // target y
+      this._tileSize, // target width
+      this._tileSize // target height
+    );
+  }
+
   drawMap(layer) {
-    const image = this._map.getImage();
-    const tileSize = this._map.size;
-    const startCol = Math.floor(this.camera.x / tileSize);
-    const endCol = startCol + Math.floor(this.camera.width / tileSize) + 1;
-    const startRow = Math.floor(this.camera.y / tileSize);
-    const endRow = startRow + Math.floor(this.camera.height / tileSize) + 1;
+    const startCol = Math.floor(this.camera.x / this._tileSize);
+    const endCol = startCol + Math.floor(this.camera.width / this._tileSize) + 1;
+    const startRow = Math.floor(this.camera.y / this._tileSize);
+    const endRow = startRow + Math.floor(this.camera.height / this._tileSize) + 1;
 
     for (let col = startCol; col <= endCol; col++) {
       for (let row = startRow; row <= endRow; row++) {
-        var x = col * tileSize - this.camera.x;
-        var y = row * tileSize - this.camera.y;
+        var x = Math.floor(col * this._tileSize - this.camera.x);
+        var y = Math.floor(row * this._tileSize - this.camera.y);
         const currentTile = this._map.getTile(layer, col, row);
         if (currentTile === 0) continue;
+        if (currentTile === 6) { // ocean
+          this._drawOcean(x, y);
+      } else {
         this.buffer.drawImage(
-          image, // image
-          (currentTile - 1) * tileSize, // source x
+          this._mapImage, // image
+          (currentTile - 1) * this._tileSize, // source x
           0, // source y
-          tileSize, // source width
-          tileSize, // source height
-          Math.floor(x), // target x
-          Math.floor(y), // target y
-          tileSize, // target width
-          tileSize // target height
+          this._tileSize, // source width
+          this._tileSize, // source height
+          x, // target x
+          y, // target y
+          this._tileSize, // target width
+          this._tileSize // target height
         );
+      }
+
       }
     }
   }

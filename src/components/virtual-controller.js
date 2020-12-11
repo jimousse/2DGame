@@ -1,4 +1,4 @@
-import { LitElement, svg, css } from 'lit-element';
+import { LitElement, svg  } from 'lit-element';
 
 class VirtualController extends LitElement {
 

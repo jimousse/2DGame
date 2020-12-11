@@ -57,6 +57,18 @@ export const PLAYER = {
     [IDLE_UP.name]:[ [ 0,2 ] ],
     [WALK_RIGHT.name]: [ [ 1, 3 ], [ 2, 3 ], [ 3, 3 ] ],
     [IDLE_RIGHT.name]:[ [ 0,3 ] ]
-  }
+  },
+  delay: 5
+};
+
+export const OCEAN = {
+  src: './assets/ocean-four-frames.png',
+  cols: 3,
+  rows: 1,
+  size: 63,
+  moveSequences: {
+    'wave': [ [ 0,0 ], [ 0, 1 ], [ 0, 2 ], [ 0, 3 ] ]
+  },
+  delay: 700
 };
 

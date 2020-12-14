@@ -23,18 +23,24 @@ class CoolGame extends LitElement {
         mouseUp: () => { this.gameInterface.playerStop();}
       }
     };
+    this._showSpeechDialog = false;
   }
 
   static get styles() {
     return css`
       .on-screen-controller {
         position: absolute;
+        user-select: none;
+      }
+      #game-canvas {
+        user-select: none;
       }
     `;
   }
 
   connectedCallback() {
     super.connectedCallback();
+    this.addEventListener('game-speech', this._handleSpeechEvent);
     this._canvasSize = Math.min(
       document.documentElement.clientWidth - 2 * this._margin,
       document.documentElement.clientHeight - 2 * this._margin
@@ -63,15 +69,25 @@ class CoolGame extends LitElement {
     });
   }
 
+  _handleSpeechEvent(info) {
+    const { show, content } = info.detail;
+    this._showSpeechDialog = show;
+    this._content = content;
+    this.requestUpdate();
+  }
+
   updated() {
-    const canvas = this.shadowRoot.getElementById('game-canvas');
-    this.gameInterface = new GameInterface(canvas);
-    this.gameInterface.start();
+    if (!this.gameInterface) {
+      const canvas = this.shadowRoot.getElementById('game-canvas');
+      this.gameInterface = new GameInterface(canvas);
+      this.gameInterface.start();
+    }
   }
 
   render() {
-    const controllerRadius = this._canvasSize/5; // just trying 🤷🏻‍♂️
-    const contollerTop = this._canvasSize - 2*controllerRadius;
+    const controllerRadius = this._canvasSize/6; // just trying 🤷🏻‍♂️
+    const contollerTop = this._canvasSize - 2 * controllerRadius;
+    const speechMargin = 20;
     return html`
       <div>
         <canvas
@@ -86,6 +102,13 @@ class CoolGame extends LitElement {
           style="top: ${contollerTop}px; left: ${contollerTop}px;"
           .clickHandlers=${this._controllerClickHandlers}>
         </virtual-controller>
+        ${this._showSpeechDialog ?
+          html`<text-dialog
+            top=${this._canvasSize + this._margin - speechMargin}
+            left=${this._margin + speechMargin}
+            content=${this._content}
+            name=${this._name}/>` : null}
+
       </div>
     `;
   }

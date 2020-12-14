@@ -1,5 +1,7 @@
+import { WORLD } from './asset-info';
+
 class Game {
-	constructor(map, player, camera) {
+	constructor(map, player, camera, dispatchFunction) {
 		this.map = map;
 		this.player = player;
 		this.camera = camera;
@@ -10,6 +12,7 @@ class Game {
 			x: camera.width/2 - this.player.width + this.camera.x,
 			y: camera.height/2 - this.player.height + this.camera.y
 		};
+		this.dispatchFunction = dispatchFunction;
 	}
 
 	update() {
@@ -44,12 +47,35 @@ class Game {
 
 	collide() {
 		this.camera.reset();
+
+		// get player size and coord
 		const { height, width } = this.player;
 		const { x, y } = this.playerCoordinates;
-		this.camera.stop.left = this._leftCollision({ x, y, height, width });
-		this.camera.stop.right = this._rightCollision({ x, y, height, width });
-		this.camera.stop.up = this._topCollision({ x, y, height, width });
-		this.camera.stop.down = this._bottomCollision({ x, y, height, width });
+
+		// get collision info
+		const leftCollision = this._leftCollision({ x, y, height, width });
+		const rightCollision = this._rightCollision({ x, y, height, width });
+		const bottomCollision = this._bottomCollision({ x, y, height, width });
+		const topCollision = this._topCollision({ x, y, height, width });
+
+		// stop camera if necessary
+		this.camera.stop.left = leftCollision;
+		this.camera.stop.right = rightCollision;
+		this.camera.stop.down = bottomCollision;
+		this.camera.stop.up = topCollision;
+
+		// display speech dialog
+		if (bottomCollision && this.player.face('down')) {
+			this._handleSpeech(x + width/2, y + height + this.collisionOffset);
+		} else if (topCollision && this.player.face('up'))  {
+			this._handleSpeech(x + width/2, y - this.collisionOffset);
+		} else if (rightCollision && this.player.face('right'))  {
+			this._handleSpeech(x + width + this.collisionOffset, y + height/2);
+		} else if (leftCollision && this.player.face('left'))  {
+			this._handleSpeech(x - this.collisionOffset, y + height/2);
+		} else {
+			this._cancelSpeechDialog();
+		}
 	}
 
 	/**
@@ -63,43 +89,82 @@ class Game {
 	*/
 
 	_rightCollision({ x, y, height, width }) {
-		const one = [ x + width + this.collisionOffset, y ];
-		const two = [ x + width + this.collisionOffset, y + 1 ];
-		const three = [ x + width + this.collisionOffset, y + height ];
-		const four = [ x + width + this.collisionOffset, y + height - 1 ];
-		const first = Boolean(this.map.collision(one[0], one[1])) && Boolean(this.map.collision(two[0], two[1]));
-		const second = Boolean(this.map.collision(three[0], three[1])) && Boolean(this.map.collision(four[0], four[1]));
-		return first || second;
+		const pointsToCheck = [
+			[ x + width + this.collisionOffset, y ],
+			[ x + width + this.collisionOffset, y + 1 ],
+			[ x + width + this.collisionOffset, y + height ],
+			[ x + width + this.collisionOffset, y + height - 1 ]
+		];
+		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
+			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
+			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
+			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
 	}
 
 	_leftCollision({ x, y, height }) {
-		const one = [ x - this.collisionOffset, y ];
-		const two = [ x - this.collisionOffset, y + 1 ];
-		const three = [ x - this.collisionOffset, y  + height ];
-		const four = [ x - this.collisionOffset, y + height - 1 ];
-		const first = Boolean(this.map.collision(one[0], one[1])) && Boolean(this.map.collision(two[0], two[1]));
-		const second = Boolean(this.map.collision(three[0], three[1])) && Boolean(this.map.collision(four[0], four[1]));
-		return first || second;
+		const pointsToCheck = [
+			[ x - this.collisionOffset, y ],
+			[ x - this.collisionOffset, y + 1 ],
+			[ x - this.collisionOffset, y  + height ],
+			[ x - this.collisionOffset, y + height - 1 ]
+		];
+		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
+			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
+			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
+			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
 	}
 
 	_topCollision({ x, y, width }) {
-		const one = [ x, y - this.collisionOffset ];
-		const two = [ x + 1, y  - this.collisionOffset ];
-		const three = [ x + width, y - this.collisionOffset ];
-		const four = [ x + width - 1, y - this.collisionOffset ];
-		const first = Boolean(this.map.collision(one[0], one[1])) && Boolean(this.map.collision(two[0], two[1]));
-		const second = Boolean(this.map.collision(three[0], three[1])) && Boolean(this.map.collision(four[0], four[1]));
-		return first || second;
+		const pointsToCheck = [
+			[ x, y - this.collisionOffset ],
+			[ x + 1, y  - this.collisionOffset ],
+			[ x + width, y - this.collisionOffset ],
+			[ x + width - 1, y - this.collisionOffset ]
+		];
+		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
+			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
+			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
+			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
 	}
 
 	_bottomCollision({ x, y, height, width }) {
-		const one = [ x, y + height + this.collisionOffset ];
-		const two = [ x + 1, y + height + this.collisionOffset ];
-		const three = [ x + width, y + height + this.collisionOffset ];
-		const four = [ x + width - 1, y + height + this.collisionOffset ];
-		const first = Boolean(this.map.collision(one[0], one[1])) && Boolean(this.map.collision(two[0], two[1]));
-		const second = Boolean(this.map.collision(three[0], three[1])) && Boolean(this.map.collision(four[0], four[1]));
-		return first || second;
+		const pointsToCheck = [
+			[ x, y + height + this.collisionOffset ],
+			[ x + 1, y + height + this.collisionOffset ],
+			[ x + width, y + height + this.collisionOffset ],
+			[ x + width - 1, y + height + this.collisionOffset ]
+		];
+		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
+			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
+			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
+			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
+	}
+
+	_handleSpeech(x, y) {
+		const element = this.map.getElement(x, y);
+		if (element === WORLD.elements.ocean && !this._speechDialogInvoked) {
+			this._displaySpeechDialog('I can\'t swim!');
+		}
+		if (element === WORLD.elements.tree_bottom && !this._speechDialogInvoked) {
+			this._displaySpeechDialog('I like trees!');
+		}
+	}
+
+	_displaySpeechDialog(content) {
+		this._speechDialogInvoked = true;
+		this.dispatchFunction({
+			show: true,
+			content
+		});
+	}
+
+	_cancelSpeechDialog() {
+		if (this._speechDialogInvoked) {
+			this._speechDialogInvoked = false;
+			this.dispatchFunction({
+				show: false
+			});
+		}
 	}
 }
 

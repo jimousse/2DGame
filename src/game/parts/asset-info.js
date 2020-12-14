@@ -10,7 +10,7 @@ const {
   IDLE_LEFT
 } = ACTIONS;
 
-export const TREES = {
+export const WORLD = {
   src: './assets/garden_with_ocean.png',
   cols: 16,
   rows: 16,

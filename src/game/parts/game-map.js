@@ -59,15 +59,21 @@ class GameMap extends ImageLoader {
 	}
 
 	/**
-	 * Returns 1 if the point (x,y) belongs to a tile
-	 * marked as an obstacle on the map. 0 otherwise.
+	 * Returns true if the point (x,y) belongs to a tile
+	 * marked as an obstacle on the map. false otherwise.
 	 * @param {*} x
 	 * @param {*} y
 	 */
 	collision(x, y) {
 		const col = Math.floor(x / this.size);
 		const row = Math.floor(y / this.size);
-		return this._collisionMap[row * this.cols + col];
+		return Boolean(this._collisionMap[row * this.cols + col]);
+	}
+
+	getElement(x,y) {
+		const col = Math.floor(x / this.size);
+		const row = Math.floor(y / this.size);
+		return this.layers[0][row * this.cols + col];
 	}
 
 	/**

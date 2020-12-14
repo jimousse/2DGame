@@ -90,7 +90,7 @@ class TextDialog extends LitElement {
         font-size: ${unsafeCSS(`${FONT_SIZE/2}px`)};
         border-radius: 20px;
         background: #d68033;
-        padding: 5px;
+        padding: 5px 10px 5px 10px;
         transform: rotate(-5deg);
       }
     `;

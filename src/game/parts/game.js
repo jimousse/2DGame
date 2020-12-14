@@ -146,7 +146,7 @@ class Game {
 			this._displaySpeechDialog('I can\'t swim!');
 		}
 		if (element === WORLD.elements.tree_bottom && !this._speechDialogInvoked) {
-			this._displaySpeechDialog('I like trees!');
+			this._displaySpeechDialog('I like cheese! 🧀');
 		}
 	}
 

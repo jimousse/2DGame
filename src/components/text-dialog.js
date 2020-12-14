@@ -1,11 +1,11 @@
 import { LitElement, html, css, unsafeCSS } from 'lit-element';
 
 
-const PADDING = 20;
-const FONT_SIZE = 35;
+const PADDING = 30;
+const FONT_SIZE = 45;
 const FONT_FAMILY = 'Arial';
-const MAX_HEIGHT = 300;
-const MAX_WIDTH = 300;
+const MAX_HEIGHT = 400;
+const MAX_WIDTH = 400;
 
 class TextDialog extends LitElement {
 
@@ -83,7 +83,7 @@ class TextDialog extends LitElement {
 
       .name {
         position: absolute;
-        top: -15%;
+        top: -10%;
         left: 7%;
         z-index: 1;
         color: #662616;

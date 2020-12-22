@@ -30,10 +30,10 @@ class Game extends MultiMixins(CollisionDetector) {
 			assetInfo: CAT,
 			Klass: Cat,
 			coord: { // 🤷🏻‍♂️
-				screenX: this.camera.width/2,
-				screenY: this.camera.width/2,
-				x: this.camera.width/2 + this.camera.x,
-				y: this.camera.width/2 + this.camera.y
+				screenX: 0.6*this.camera.width,
+				screenY: 0.6*this.camera.height,
+				x: 0.6*this.camera.width + this.camera.x,
+				y: 0.6*this.camera.height + this.camera.y
 			}
 		});
 	}

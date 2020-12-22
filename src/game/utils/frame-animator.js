@@ -5,9 +5,6 @@ class FrameAnimator {
       this[prop] = value;
     }
     this._frameSets = this._createFrameSets();
-    this._currentFrame = this._frameSets[initialState.action][0];
-    this._count = 0;
-    this._delay = assetInfo.delay;
   }
 
   _getTile([ row, col ]) {
@@ -28,12 +25,7 @@ class FrameAnimator {
   }
 
   getCurrentFrame(action, sequenceIndex) {
-    if (this._count >= this._delay) {
-      this._count = 0;
-      this._currentFrame =  this._frameSets[action][sequenceIndex];
-    }
-    this._count++;
-    return this._currentFrame;
+    return this._frameSets[action][sequenceIndex];
   }
 }
 

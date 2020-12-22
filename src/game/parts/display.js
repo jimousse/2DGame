@@ -41,6 +41,7 @@ class Display {
   }
 
   _drawOcean(x, y) {
+    this._ocean.updateWave();
     this.buffer.drawImage(
       this._oceanImage, // image
       ...this._ocean.getCurrentFrame(),

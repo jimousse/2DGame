@@ -1,23 +1,51 @@
-import { WORLD } from './asset-info';
+import { WORLD, PLAYER, CAT } from './asset-info';
+import Player from './player';
+import Cat from './cat';
+import { CollisionDetector, MultiMixins } from '../mixins/index';
+import NPC from './npc';
 
-class Game {
-	constructor(map, player, camera, dispatchFunction) {
+class Game extends MultiMixins(CollisionDetector) {
+	constructor(map, camera, dispatchFunction) {
+		super();
+		this.collisionOffset = camera.speed;
 		this.map = map;
-		this.player = player;
 		this.camera = camera;
-		this.collisionOffset = this.camera.speed;
-		this.playerCoordinates = {
-			screenX: camera.width/2 - this.player.width,
-			screenY: camera.height/2 - this.player.height,
-			x: camera.width/2 - this.player.width + this.camera.x,
-			y: camera.height/2 - this.player.height + this.camera.y
-		};
 		this.dispatchFunction = dispatchFunction;
+		this._initPlayer();
+		this._initNPCs();
+	}
+
+	_initPlayer() {
+		this.player = new Player(PLAYER);
+		this.playerCoordinates = { // 🤷🏻‍♂️
+			screenX: this.camera.width/2 - this.player.width,
+			screenY: this.camera.height/2 - this.player.height,
+			x: this.camera.width/2 - this.player.width + this.camera.x,
+			y: this.camera.height/2 - this.player.height + this.camera.y
+		};
+	}
+
+	_initNPCs() {
+		this.npc = new NPC({
+			assetInfo: CAT,
+			Klass: Cat,
+			coord: { // 🤷🏻‍♂️
+				screenX: this.camera.width/2,
+				screenY: this.camera.width/2,
+				x: this.camera.width/2 + this.camera.x,
+				y: this.camera.width/2 + this.camera.y
+			}
+		});
 	}
 
 	update() {
 		this.updatePlayerCoordinates();
 		this.collide();
+		this._updateNPCs();
+	}
+
+	_updateNPCs() {
+		this.npc.update();
 	}
 
 	getPlayerInfo() {
@@ -31,19 +59,50 @@ class Game {
 		};
 	}
 
-	movePlayer(direction) {
-		if (direction === 'right') this.player.moveRight();
-		if (direction === 'left') this.player.moveLeft();
-		if (direction === 'up') this.player.moveUp();
-		if (direction === 'down') this.player.moveDown();
-		if (direction === 'idle') this.player.setIdle();
+	getNPCsInfo() {
+		return this.npc.getDisplayInfo();
+	}
+
+	moveLeft() {
+		this.camera.moveLeft();
+		this.player.moveLeft();
+		if (!this.camera.stop.left) {
+			this.npc.coordinates.screenX += this.camera.speed;
+		}
+	}
+
+	moveRight() {
+		this.camera.moveRight();
+		this.player.moveRight();
+		if (!this.camera.stop.right) {
+			this.npc.coordinates.screenX -= this.camera.speed;
+		}
+	}
+
+	moveUp() {
+		this.camera.moveUp();
+		this.player.moveUp();
+		if (!this.camera.stop.up) {
+			this.npc.coordinates.screenY += this.camera.speed;
+		}
+	}
+
+	moveDown() {
+		this.camera.moveDown();
+		this.player.moveDown();
+		if (!this.camera.stop.down) {
+			this.npc.coordinates.screenY -= this.camera.speed;
+		}
+	}
+
+	setIdle() {
+		this.player.setIdle();
 	}
 
 	updatePlayerCoordinates() {
 		this.playerCoordinates.x = this.playerCoordinates.screenX + this.camera.x;
 		this.playerCoordinates.y = this.playerCoordinates.screenY + this.camera.y;
 	}
-
 
 	collide() {
 		this.camera.reset();
@@ -78,75 +137,26 @@ class Game {
 		}
 	}
 
-	/**
-								 player
-		(x,y) ->  +-----------+ <- (x + width, y)
-							|           |
-							|           |
-							|           |
-							+-----------+ <- (x + width, y + height)
-							 <- width ->
-	*/
-
-	_rightCollision({ x, y, height, width }) {
-		const pointsToCheck = [
-			[ x + width + this.collisionOffset, y ],
-			[ x + width + this.collisionOffset, y + 1 ],
-			[ x + width + this.collisionOffset, y + height ],
-			[ x + width + this.collisionOffset, y + height - 1 ]
-		];
-		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
-			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
-			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
-			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
-	}
-
-	_leftCollision({ x, y, height }) {
-		const pointsToCheck = [
-			[ x - this.collisionOffset, y ],
-			[ x - this.collisionOffset, y + 1 ],
-			[ x - this.collisionOffset, y  + height ],
-			[ x - this.collisionOffset, y + height - 1 ]
-		];
-		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
-			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
-			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
-			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
-	}
-
-	_topCollision({ x, y, width }) {
-		const pointsToCheck = [
-			[ x, y - this.collisionOffset ],
-			[ x + 1, y  - this.collisionOffset ],
-			[ x + width, y - this.collisionOffset ],
-			[ x + width - 1, y - this.collisionOffset ]
-		];
-		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
-			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
-			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
-			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
-	}
-
-	_bottomCollision({ x, y, height, width }) {
-		const pointsToCheck = [
-			[ x, y + height + this.collisionOffset ],
-			[ x + 1, y + height + this.collisionOffset ],
-			[ x + width, y + height + this.collisionOffset ],
-			[ x + width - 1, y + height + this.collisionOffset ]
-		];
-		return this.map.collision(pointsToCheck[0][0], pointsToCheck[0][1]) &&
-			this.map.collision(pointsToCheck[1][0], pointsToCheck[1][1]) ||
-			this.map.collision(pointsToCheck[2][0], pointsToCheck[2][1]) &&
-			this.map.collision(pointsToCheck[3][0], pointsToCheck[3][1]);
-	}
 
 	_handleSpeech(x, y) {
-		const element = this.map.getElement(x, y);
-		if (element === WORLD.elements.ocean && !this._speechDialogInvoked) {
-			this._displaySpeechDialog('I can\'t swim!');
+		if (this._speechDialogInvoked) return;
+		if (this.map.getElement(x, y) === WORLD.elements.ocean) {
+			this._displaySpeechDialog({
+				name: 'Jimmy',
+				text: 'I can\'t swim!'
+			});
 		}
-		if (element === WORLD.elements.tree_bottom && !this._speechDialogInvoked) {
-			this._displaySpeechDialog('I like cheese! 🧀');
+		if (this.map.getElement(x, y) === WORLD.elements.tree_bottom) {
+			this._displaySpeechDialog({
+				name: 'Jimmy',
+				text: 'I like trees!'
+			});
+		}
+		if (this.npc.collision(x,y)) {
+			this._displaySpeechDialog({
+				name: 'Cat',
+				text: 'Meooow ❤️'
+			});
 		}
 	}
 
@@ -154,7 +164,7 @@ class Game {
 		this._speechDialogInvoked = true;
 		this.dispatchFunction({
 			show: true,
-			content
+			...content
 		});
 	}
 

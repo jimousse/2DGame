@@ -1,12 +1,12 @@
-import { ImageLoader } from '../mixins/index.js';
+import { ImageLoader, MultiMixins } from '../mixins/index.js';
 
 // the border length should be half of the camera size
 const BORDER_LENGTH = 4;
 const BORDER_CONTENT = 6;
 
-class GameMap extends ImageLoader {
+class GameMap extends MultiMixins(ImageLoader) {
 	constructor(params) {
-		super(params.src);
+		super(params);
 		for (const [ prop, value ] of Object.entries(params)) {
 			if (value === undefined) continue;
 			this[prop] = value;

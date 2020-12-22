@@ -70,9 +70,10 @@ class CoolGame extends LitElement {
   }
 
   _handleSpeechEvent(info) {
-    const { show, content } = info.detail;
+    const { show, text, name } = info.detail;
     this._showSpeechDialog = show;
-    this._content = content;
+    this._text = text;
+    this._name = name;
     this.requestUpdate();
   }
 
@@ -106,8 +107,8 @@ class CoolGame extends LitElement {
           html`<text-dialog
             top=${this._canvasSize + this._margin - speechMargin}
             left=${this._margin + speechMargin}
-            content=${this._content}
-            name=${this._name}/>` : null}
+            text=${this._text}
+            name=${this._name} />` : null}
 
       </div>
     `;

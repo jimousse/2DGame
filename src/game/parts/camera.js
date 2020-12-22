@@ -1,4 +1,4 @@
-const CAMERA_SPEED = 2;
+const CAMERA_SPEED = 3;
 
 /**
  * map - instance of GameMap

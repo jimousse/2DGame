@@ -9,8 +9,6 @@ import {
 
 import { WORLD } from './parts/asset-info.js';
 
-const CAMERA_SIZE = 512;
-
 export class GameInterface {
   constructor(canvas) {
     this.canvas = canvas;
@@ -27,10 +25,11 @@ export class GameInterface {
   }
 
   _init() {
+    const { cameraSize } = WORLD;
     this._controller = new Controller();
-    this._camera = new Camera(CAMERA_SIZE, CAMERA_SIZE);
+    this._camera = new Camera(cameraSize, cameraSize);
     this._gameMap = new GameMap(WORLD);
-    this._display = new Display(this.canvas, this._gameMap, this._camera, CAMERA_SIZE, CAMERA_SIZE);
+    this._display = new Display(this.canvas, this._gameMap, this._camera, cameraSize, cameraSize);
     this._game = new Game(this._gameMap, this._camera, this._dispatchEvent.bind(this));
     this._engine = new Engine(this._render.bind(this), this._update.bind(this));
   }

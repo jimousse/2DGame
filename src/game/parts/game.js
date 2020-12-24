@@ -18,10 +18,8 @@ class Game {
 
 	_initPlayer() {
 		this.player = new Player(PLAYER);
-		this.player.screenX = this.camera.width/2 - this.player.width,
-		this.player.screenY = this.camera.height/2 - this.player.height,
-		this.player.x = this.camera.width/2 - this.player.width + this.camera.x,
-		this.player.y = this.camera.height/2 - this.player.height + this.camera.y;
+		this.player.screenX = this.camera.width/2;
+		this.player.screenY = this.camera.height/2;
 	}
 
 	_initNPCs() {
@@ -33,10 +31,8 @@ class Game {
 				text: 'Meoooow ❤️'
 			},
 			coord: { // 🤷🏻‍♂️
-				screenX: 0.6*this.camera.width,
-				screenY: 0.6*this.camera.height,
-				x: 0.6*this.camera.width + this.camera.x,
-				y: 0.6*this.camera.height + this.camera.y
+				screenX: this.player.screenX - 60,
+				screenY: this.player.screenY + 60
 			}
 		});
 	}

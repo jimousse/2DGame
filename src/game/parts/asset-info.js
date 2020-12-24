@@ -9,6 +9,7 @@ export const WORLD = {
     path: [ 2 ],
     ocean: [ 6 ]
   },
+  cameraSize: 450,
   playableArea: [
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,

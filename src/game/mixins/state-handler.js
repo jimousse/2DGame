@@ -50,6 +50,33 @@ const StateHandler = base => {
   		const { action, sequenceIndex } = this.getMoveState();
   		return this._frameAnimator.getCurrentFrame(action, sequenceIndex);
   	}
+
+  	moveRight() {
+  		this._updateState('walk_right');
+  	}
+
+  	moveLeft() {
+  		this._updateState('walk_left');
+  	}
+
+  	moveUp() {
+  		this._updateState('walk_up');
+  	}
+
+  	moveDown() {
+  		this._updateState('walk_down');
+  	}
+
+  	face(direction) {
+  		return this._state.action.indexOf(direction) >=0;
+  	}
+
+  	setIdle() {
+  		if (this.face('right')) this._updateState('idle_right');
+  		if (this.face('left')) this._updateState('idle_left');
+  		if (this.face('up')) this._updateState('idle_up');
+  		if (this.face('down')) this._updateState('idle_down');
+  	}
   };
 };
 

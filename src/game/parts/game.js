@@ -1,12 +1,9 @@
 import { WORLD, PLAYER, CAT } from './asset-info';
 import Player from './player';
-import Cat from './cat';
-import { CollisionDetector, MultiMixins } from '../mixins/index';
 import NPC from './npc';
 
-class Game extends MultiMixins(CollisionDetector) {
+class Game {
 	constructor(map, camera, dispatchFunction) {
-		super();
 		this.collisionOffset = camera.speed;
 		this.map = map;
 		this.camera = camera;
@@ -28,7 +25,12 @@ class Game extends MultiMixins(CollisionDetector) {
 	_initNPCs() {
 		this.npc = new NPC({
 			assetInfo: CAT,
-			Klass: Cat,
+			camera: this.camera,
+			speed: - this.camera.speed,
+			dialog: {
+				name: 'Jasper',
+				text: 'Meoooow ❤️'
+			},
 			coord: { // 🤷🏻‍♂️
 				screenX: 0.6*this.camera.width,
 				screenY: 0.6*this.camera.height,
@@ -40,12 +42,8 @@ class Game extends MultiMixins(CollisionDetector) {
 
 	update() {
 		this.updatePlayerCoordinates();
-		this.collide();
-		this._updateNPCs();
-	}
-
-	_updateNPCs() {
 		this.npc.update();
+		this.collide();
 	}
 
 	getPlayerInfo() {
@@ -112,51 +110,71 @@ class Game extends MultiMixins(CollisionDetector) {
 		const { x, y } = this.playerCoordinates;
 
 		// get collision info
-		const leftCollision = this._leftCollision({ x, y, height, width });
-		const rightCollision = this._rightCollision({ x, y, height, width });
-		const bottomCollision = this._bottomCollision({ x, y, height, width });
-		const topCollision = this._topCollision({ x, y, height, width });
+		const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
+		const npcCollision = this.npc.collision(x, y, width, height,  this.collisionOffset);
+
+		const left = mapCollision.left || npcCollision.left;
+		const right = mapCollision.right || npcCollision.right;
+		const bottom = mapCollision.bottom || npcCollision.bottom;
+		const top = mapCollision.top || npcCollision.top;
 
 		// stop camera if necessary
-		this.camera.stop.left = leftCollision;
-		this.camera.stop.right = rightCollision;
-		this.camera.stop.down = bottomCollision;
-		this.camera.stop.up = topCollision;
+		this.camera.stop.left = left;
+		this.camera.stop.right = right;
+		this.camera.stop.down = bottom;
+		this.camera.stop.up = top;
 
 		// display speech dialog
-		if (bottomCollision && this.player.face('down')) {
-			this._handleSpeech(x + width/2, y + height + this.collisionOffset);
-		} else if (topCollision && this.player.face('up'))  {
-			this._handleSpeech(x + width/2, y - this.collisionOffset);
-		} else if (rightCollision && this.player.face('right'))  {
-			this._handleSpeech(x + width + this.collisionOffset, y + height/2);
-		} else if (leftCollision && this.player.face('left'))  {
-			this._handleSpeech(x - this.collisionOffset, y + height/2);
+		if (bottom && this.player.face('down')) {
+			const _x = x + width/2;
+			const _y = y + height + this.collisionOffset;
+			this._handleSpeech(_x, _y, mapCollision, npcCollision);
+		} else if (top && this.player.face('up'))  {
+			const _x = x + width/2;
+			const _y = y - this.collisionOffset;
+			this._handleSpeech(_x, _y, mapCollision, npcCollision);
+		} else if (right && this.player.face('right'))  {
+			const _x = x + width + this.collisionOffset;
+			const _y =  y + height/2;
+			this._handleSpeech(_x, _y, mapCollision, npcCollision);
+		} else if (left && this.player.face('left'))  {
+			const _x = x - this.collisionOffset;
+			const _y =  y + height/2;
+			this._handleSpeech(_x, _y, mapCollision, npcCollision);
 		} else {
 			this._cancelSpeechDialog();
 		}
 	}
 
 
-	_handleSpeech(x, y) {
+	_handleSpeech(x, y, mapCollision, npcCollision) {
 		if (this._speechDialogInvoked) return;
-		if (this.map.getElement(x, y) === WORLD.elements.ocean) {
-			this._displaySpeechDialog({
-				name: 'Jimmy',
-				text: 'I can\'t swim!'
-			});
+
+		const isMapElement = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
+		const isNPC = Object.values(npcCollision).reduce((acc, value) => acc || value, false);
+
+		if (isMapElement) {
+			const element = this.map.getElement(x, y);
+			switch (element) {
+				case WORLD.elements.ocean[0]:
+					this._displaySpeechDialog({
+						name: 'Jimmy',
+						text: 'I can\'t swim!'
+					});
+					break;
+				case WORLD.elements.tree[0]:
+					this._displaySpeechDialog({
+						name: 'Jimmy',
+						text: 'I like trees!'
+					});
+					break;
+				default:
+					break;
+			}
 		}
-		if (this.map.getElement(x, y) === WORLD.elements.tree_bottom) {
-			this._displaySpeechDialog({
-				name: 'Jimmy',
-				text: 'I like trees!'
-			});
-		}
-		if (this.npc.collision(x,y)) {
-			this._displaySpeechDialog({
-				name: 'Cat',
-				text: 'Meooow ❤️'
-			});
+
+		if (isNPC) {
+			this._displaySpeechDialog(this.npc.dialog);
 		}
 	}
 

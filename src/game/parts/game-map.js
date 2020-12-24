@@ -1,10 +1,10 @@
-import { ImageLoader, MultiMixins } from '../mixins/index.js';
+import { ImageLoader, MultiMixins, CollisionDetector } from '../mixins/index.js';
 
 // the border length should be half of the camera size
 const BORDER_LENGTH = 4;
 const BORDER_CONTENT = 6;
 
-class GameMap extends MultiMixins(ImageLoader) {
+class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 	constructor(params) {
 		super(params);
 		for (const [ prop, value ] of Object.entries(params)) {
@@ -40,12 +40,16 @@ class GameMap extends MultiMixins(ImageLoader) {
 	}
 
 	_buildTopLayer() {
-		const { tree_bottom, tree_top } = this.elements;
 		let topLayer = new Array(this.rows*this.cols).fill(0);
 		this.layers[0].forEach((tile, i) => {
-			if (tile === tree_bottom) {
-				topLayer[i - this.rows] = tree_top;
+			for (const [ element, layers ] of Object.entries(this.elements)) {
+				if (layers.length >= 2) {
+					if (tile === layers[0]) {
+						topLayer[i - this.rows] = layers[1];
+					}
+				}
 			}
+
 		});
 		this.layers[1] = topLayer;
 	}
@@ -64,7 +68,7 @@ class GameMap extends MultiMixins(ImageLoader) {
 	 * @param {*} x
 	 * @param {*} y
 	 */
-	collision(x, y) {
+	_pointCollision(x, y) {
 		const col = Math.floor(x / this.size);
 		const row = Math.floor(y / this.size);
 		return Boolean(this._collisionMap[row * this.cols + col]);

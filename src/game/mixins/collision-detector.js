@@ -1,77 +1,74 @@
+/**
+ * Mixin that contains the common collision detection
+ * methods.
+ * this._pointCollision is specific to the class using this mixin.
+ * For instance:
+ * - npc: _pointCollision = is within npc boundary
+ * - map: _pointCollision = is within any of the obstacle of the map
+ * @param {*} base - base class to extent
+ */
 const CollisionDetector = base => {
 	return class extends base {
-		constructor() {
-			super();
+		constructor(config) {
+			super(config);
 		}
 
 		/**
-									 player
+		 * Checks whether points of a segment
+		 * collides with obstacles using _pointDetection
+		 * Loops along the constant coordinate
+		 * @param {*} constantCoord
+		 * @param {*} startCoord
+		 * @param {*} length
+		 * @param {*} isHorizontal
+		 */
+		_segmentCollision(constantCoord, startCoord, length, isHorizontal) {
+			let collision = false;
+			let increment = 1; // in px
+			for(let i = startCoord; i < startCoord + length ; i+= increment) {
+				collision = collision ||
+					(isHorizontal ? this._pointCollision(i, constantCoord) : this._pointCollision(constantCoord, i));
+			}
+			return collision;
+		}
+
+		/**
+		 * Detects whether a foreign object defined by a rect:
+		 * (x,y) is the top left corner and width and wight
+
+		 						foreign object
 			(x,y) ->  +-----------+ <- (x + width, y)
 								|           |
 								|           |
 								|           |
 								+-----------+ <- (x + width, y + height)
 								 <- width ->
-		*/
 
-		_rightCollision({ x, y, height, width }) {
-			const constantX = x + width + this.collisionOffset;
-			const mapCollision =
-				this.map.collision(constantX, y) &&
-				this.map.collision(constantX, y + 1) ||
-				this.map.collision(constantX, y + height) &&
-				this.map.collision(constantX, y + height - 1);
-			const npcCollision =
-				this.npc.collision(constantX, y) ||
-				this.npc.collision(constantX, y + height/ 2) ||
-				this.npc.collision(constantX, y + height);
+		 * has one of its four side colliding with one of the obtacle
+		 * @param {*} x
+		 * @param {*} y
+		 * @param {*} width
+		 * @param {*} height
+		 * @param {*} offset
+		 */
+		collision( x, y, width, height, offset ) {
+			// right
+			const constantXRight = x + width + offset;
+			const right = this._segmentCollision(constantXRight, y, height, false);
 
-			return npcCollision || mapCollision;
-		}
+			// left
+			const constantXLeft = x - offset;
+			const left = this._segmentCollision(constantXLeft, y, height, false);
 
-		_leftCollision({ x, y, height }) {
-			const constantX = x - this.collisionOffset;
-			const mapCollision =
-				this.map.collision(constantX, y) &&
-				this.map.collision(constantX, y + 1) ||
-				this.map.collision(constantX, y  + height) &&
-				this.map.collision(constantX, y + height - 1);
-			const npcCollision =
-				this.npc.collision(constantX, y) ||
-				this.npc.collision(constantX, y  + height/2) ||
-				this.npc.collision(constantX, y  + height);
+			// top
+			const constantYTop = y - offset;
+			const top = this._segmentCollision(constantYTop, x, width, true);
 
-			return npcCollision || mapCollision;
-		}
+			// bottom
+			const constantYBottom = y + height + offset;
+			const bottom = this._segmentCollision(constantYBottom, x, width, true);
 
-		_topCollision({ x, y, width }) {
-			const constantY = y - this.collisionOffset;
-			const mapCollision =
-				this.map.collision(x, constantY) &&
-				this.map.collision(x + 1, constantY) ||
-				this.map.collision(x + width, constantY) &&
-				this.map.collision(x + width - 1, constantY);
-			const npcCollision =
-				this.npc.collision(x, constantY) ||
-				this.npc.collision(x + width/2, constantY) ||
-				this.npc.collision(x + width, constantY);
-
-			return npcCollision || mapCollision;
-		}
-
-		_bottomCollision({ x, y, height, width }) {
-			const constantY = y + height + this.collisionOffset;
-			const mapCollision =
-				this.map.collision(x, constantY) &&
-				this.map.collision(x + 1, constantY) ||
-				this.map.collision(x + width, constantY) &&
-				this.map.collision(x + width - 1, constantY);
-			const npcCollision =
-				this.npc.collision(x, constantY) ||
-				this.npc.collision(x + width / 2, constantY) ||
-				this.npc.collision(x + width, constantY);
-
-			return npcCollision || mapCollision;
+			return { left, right, top, bottom };
 		}
 	};
 };

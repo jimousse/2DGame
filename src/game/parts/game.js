@@ -2,6 +2,8 @@ import { WORLD, PLAYER, CAT } from './asset-info';
 import Player from './player';
 import NPC from './npc';
 
+const CAT_SPEED = 0.5;
+const NPC_MAX_DISTANCE = 400;
 class Game {
 	constructor(map, camera, dispatchFunction) {
 		this.collisionOffset = camera.speed;
@@ -10,23 +12,22 @@ class Game {
 		this.dispatchFunction = dispatchFunction;
 		this._initPlayer();
 		this._initNPCs();
+		this._npcDistance = 0;
+		this._npcHorizontalDirection = -1;
 	}
 
 	_initPlayer() {
 		this.player = new Player(PLAYER);
-		this.playerCoordinates = { // 🤷🏻‍♂️
-			screenX: this.camera.width/2 - this.player.width,
-			screenY: this.camera.height/2 - this.player.height,
-			x: this.camera.width/2 - this.player.width + this.camera.x,
-			y: this.camera.height/2 - this.player.height + this.camera.y
-		};
+		this.player.screenX = this.camera.width/2 - this.player.width,
+		this.player.screenY = this.camera.height/2 - this.player.height,
+		this.player.x = this.camera.width/2 - this.player.width + this.camera.x,
+		this.player.y = this.camera.height/2 - this.player.height + this.camera.y;
 	}
 
 	_initNPCs() {
 		this.npc = new NPC({
 			assetInfo: CAT,
 			camera: this.camera,
-			speed: - this.camera.speed,
 			dialog: {
 				name: 'Jasper',
 				text: 'Meoooow ❤️'
@@ -42,16 +43,52 @@ class Game {
 
 	update() {
 		this.updatePlayerCoordinates();
-		this.npc.update();
 		this.collide();
+		this._npcStartMoving();
+	}
+
+	_npcStartMoving() {
+		const { x,y } = this.npc.coordinates;
+		const { width, height } = this.npc;
+		const playerCollision = this.player.collision(x, y, width, height, this.collisionOffset);
+		const metPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
+		if (metPlayer) {
+			this.npc.setIdle();
+			return;
+		};
+
+		const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
+		const metOstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
+		if (metOstacle) {
+			this._npcHorizontalDirection = this._npcHorizontalDirection === 1 ? -1 : 1;
+			this._npcDistance = 0;
+		}
+		if(this._npcHorizontalDirection < 0) {
+			this.npc.moveLeft();
+			this.npc.coordinates.screenX -= CAT_SPEED;
+			this.npc._updateCoordinates();
+			if (this._npcDistance > NPC_MAX_DISTANCE) {
+				this._npcHorizontalDirection = 1;
+				this._npcDistance = 0;
+			}
+		} else {
+			this.npc.moveRight();
+			this.npc.coordinates.screenX += CAT_SPEED;
+			this.npc._updateCoordinates();
+			if (this._npcDistance > NPC_MAX_DISTANCE) {
+				this._npcHorizontalDirection = -1;
+				this._npcDistance = 0;
+			}
+		}
+		this._npcDistance += CAT_SPEED;
 	}
 
 	getPlayerInfo() {
 		return {
 			image: this.player.getImage(),
 			frame: this.player.getCurrentFrame(),
-			x: this.playerCoordinates.screenX,
-			y: this.playerCoordinates.screenY,
+			x: this.player.screenX,
+			y: this.player.screenY,
 			width: this.player.width,
 			height: this.player.height
 		};
@@ -98,16 +135,15 @@ class Game {
 	}
 
 	updatePlayerCoordinates() {
-		this.playerCoordinates.x = this.playerCoordinates.screenX + this.camera.x;
-		this.playerCoordinates.y = this.playerCoordinates.screenY + this.camera.y;
+		this.player.x = this.player.screenX + this.camera.x;
+		this.player.y = this.player.screenY + this.camera.y;
 	}
 
 	collide() {
 		this.camera.reset();
 
 		// get player size and coord
-		const { height, width } = this.player;
-		const { x, y } = this.playerCoordinates;
+		const { height, width, x, y } = this.player;
 
 		// get collision info
 		const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);

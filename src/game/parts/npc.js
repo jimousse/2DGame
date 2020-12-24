@@ -1,15 +1,16 @@
-import Player from './player.js';
+  import Player from './player.js';
 import { MultiMixins, CollisionDetector } from '../mixins/index.js';
+
+
+const CAT_SPEED = 0;
 class NPC extends MultiMixins([ CollisionDetector ]) {
   constructor({
     coord,
     assetInfo,
     camera,
-    speed,
     dialog
   } = {}) {
     super();
-    this.speed = speed;
     this.dialog = dialog,
     this.camera = camera,
     this._instance = new Player(assetInfo);
@@ -23,38 +24,23 @@ class NPC extends MultiMixins([ CollisionDetector ]) {
 		this.coordinates.y = this.coordinates.screenY + this.camera.y;
   }
 
-  update(direction = 'idle_down') {
-    this._updateCoordinates();
-    this._instance._updateState(direction);
-  }
-
-  stop() {
-    this._instance.moveDown();
-    this.setIdle();
-    return;
-  }
-
   moveDown() {
     this._instance.moveDown();
-    this.coordinates.screenY += this.speed;
     this._updateCoordinates();
   }
 
   moveUp() {
     this._instance.moveUp();
-    this.coordinates.screenY -= this.speed;
     this._updateCoordinates();
   }
 
   moveRight() {
     this._instance.moveRight();
-    this.coordinates.screenX += this.speed;
     this._updateCoordinates();
   }
 
   moveLeft() {
     this._instance.moveLeft();
-    this.coordinates.screenX -= this.speed;
     this._updateCoordinates();
   }
 

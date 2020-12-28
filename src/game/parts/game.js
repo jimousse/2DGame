@@ -1,4 +1,4 @@
-import { WORLD, PLAYER, CAT } from './asset-info';
+import { PLAYER, CAT } from './asset-info';
 import Player from './player';
 import NPC from './npc';
 
@@ -25,24 +25,36 @@ class Game {
 				camera: this.camera,
 				dialog: {
 					name: 'Jasper',
-					text: 'Meoooow... 😻'
+					text: 'Meoooow ❤️'
 				},
 				speed: 0.5,
 				maxDistance: 400,
 				screenX: this.player.screenX - 60,
 				screenY: this.player.screenY + 100
 			}),
-
 			new NPC({
 				assetInfo: CAT,
 				camera: this.camera,
 				dialog: {
 					name: 'Tom',
-					text: '😾'
+					text: 'Woof woof 🐶'
 				},
 				speed: 0,
 				screenX: this.player.screenX + 100,
 				screenY: this.player.screenY - 60
+			}),
+			new NPC({
+				assetInfo: CAT,
+				camera: this.camera,
+				dialog: {
+					name: 'Figaro',
+					text: 'Got any food?'
+				},
+				initialDirection: 'left',
+				speed: 0.3,
+				maxDistance: 100,
+				screenX: this.player.screenX + 200,
+				screenY: this.player.screenY + 200
 			})
 		];
 	}

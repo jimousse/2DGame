@@ -4,6 +4,7 @@ class NPC extends Player {
   constructor({
     assetInfo,
     camera,
+    initialDirection = 'down',
     ...rest
   } = {}) {
     super(assetInfo, camera);
@@ -11,7 +12,27 @@ class NPC extends Player {
 			if (value === undefined) continue;
 			this[prop] = value;
 		}
+		this._setInitialDirection(initialDirection);
 		this._distanceTraveled = 0;
+  }
+
+  _setInitialDirection(dir) {
+    switch (dir) {
+      case 'down':
+        this.moveDown();
+        break;
+      case 'up':
+        this.moveUp();
+        break;
+      case 'right':
+        this.moveRight();
+        break;
+      case 'left':
+        this.moveLeft();
+        break;
+      default:
+        break;
+    }
   }
 
   /**

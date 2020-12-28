@@ -11,9 +11,7 @@ class NPC extends Player {
 			if (value === undefined) continue;
 			this[prop] = value;
 		}
-
 		this._distanceTraveled = 0;
-		this._maximumDistance = 400;
   }
 
   /**
@@ -55,7 +53,7 @@ class NPC extends Player {
    * @param {Boolean} playerCollision - met the main player
    */
   move(mapCollision, playerCollision) {
-		if (playerCollision) {
+		if (playerCollision || !this.speed) {
 			this.setIdle();
 			return;
 		};
@@ -73,14 +71,14 @@ class NPC extends Player {
 		if (this.face('left')) {
 		  this.moveLeft();
 		  this.screenX -= this.speed;
-		  if (this._distanceTraveled > this._maximumDistance) {
+		  if (this._distanceTraveled > this.maxDistance) {
 		    this.moveRight();
 		    this._distanceTraveled = 0;
 		  }
 		} else {
 		  this.moveRight();
       this.screenX += this.speed;
-		  if (this._distanceTraveled > this._maximumDistance) {
+		  if (this._distanceTraveled > this.maxDistance) {
 		    this.moveLeft();
 		    this._distanceTraveled = 0;
 		  }

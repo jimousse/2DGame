@@ -19,73 +19,109 @@ class Game {
 	}
 
 	_initNPCs() {
-		this.npc = new NPC({
-			assetInfo: CAT,
-			camera: this.camera,
-			dialog: {
-				name: 'Jasper',
-				text: 'Meoooow ❤️'
-			},
-			speed: 0.5,
-			maxDistance: 400
-		});
-		this.npc.screenX = this.player.screenX - 60,
-		this.npc.screenY = this.player.screenY + 60;
+		this.npcs = [
+			new NPC({
+				assetInfo: CAT,
+				camera: this.camera,
+				dialog: {
+					name: 'Jasper',
+					text: 'Meoooow... 😻'
+				},
+				speed: 0.5,
+				maxDistance: 400,
+				screenX: this.player.screenX - 60,
+				screenY: this.player.screenY + 100
+			}),
+
+			new NPC({
+				assetInfo: CAT,
+				camera: this.camera,
+				dialog: {
+					name: 'Tom',
+					text: '😾'
+				},
+				speed: 0,
+				screenX: this.player.screenX + 100,
+				screenY: this.player.screenY - 60
+			})
+		];
 	}
 
 	update() {
 		this.player.update();
 		this.collide();
-		this.npcMove();
+		this.npcsMove();
 	}
 
-	npcMove() {
-		const { x, y, width, height } = this.npc;
-		const playerCollision = this.player.collision(x, y, width, height, this.collisionOffset);
-		const metPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
-		const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
-		const metOstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
-
-		this.npc.move(metOstacle, metPlayer);
+	npcsMove() {
+		for (const npc of this.npcs) {
+			const { x, y, width, height } = npc;
+			const playerCollision = this.player.collision(x, y, width, height, this.collisionOffset);
+			const metPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
+			const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
+			const metOstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
+			npc.move(metOstacle, metPlayer);
+		}
 	}
 
-	getPlayerInfo() {
-		return this.player.getDisplayInfo();
-	}
-
-	getNPCsInfo() {
-		return this.npc.getDisplayInfo();
+	getCharactersDisplayInfo() {
+		return [
+			this.player.getDisplayInfo(),
+			...this.npcs.map(npc => npc.getDisplayInfo())
+		];
 	}
 
 	moveLeft() {
 		this.camera.moveLeft();
 		this.player.moveLeft();
-		this.npc.keepImmobile('left');
-
+		for (const npc of this.npcs) {
+			npc.keepImmobile('left');
+		}
 	}
 
 	moveRight() {
 		this.camera.moveRight();
 		this.player.moveRight();
-		this.npc.keepImmobile('right');
+		for (const npc of this.npcs) {
+			npc.keepImmobile('right');
+		}
 	}
 
 	moveUp() {
 		this.camera.moveUp();
 		this.player.moveUp();
-		this.npc.keepImmobile('up');
+		for (const npc of this.npcs) {
+			npc.keepImmobile('up');
+		}
 
 	}
 
 	moveDown() {
 		this.camera.moveDown();
 		this.player.moveDown();
-		this.npc.keepImmobile('down');
-
+		for (const npc of this.npcs) {
+			npc.keepImmobile('down');
+		}
 	}
 
 	setIdle() {
 		this.player.setIdle();
+	}
+
+	checkNPCsCollision({ x, y, width, height }) {
+		const collision = { left: false, right: false, top: false, bottom: false };
+		let npcIndex = null;
+		this.npcs.forEach((npc, i) =>{
+			const currentCollision = npc.collision(x, y, width, height,  this.collisionOffset);
+			collision.left = collision.left || currentCollision.left;
+			collision.right = collision.right || currentCollision.right;
+			collision.top = collision.top || currentCollision.top;
+			collision.bottom = collision.bottom || currentCollision.bottom;
+			if (Object.values(currentCollision).reduce((acc, value) => acc || value, false)) {
+				npcIndex = i;
+			}
+		});
+		return { collision, npcIndex };
 	}
 
 	collide() {
@@ -96,7 +132,7 @@ class Game {
 
 		// get collision info
 		const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
-		const npcCollision = this.npc.collision(x, y, width, height,  this.collisionOffset);
+		const { collision: npcCollision, npcIndex } = this.checkNPCsCollision({ x, y, width, height });
 
 		const left = mapCollision.left || npcCollision.left;
 		const right = mapCollision.right || npcCollision.right;
@@ -110,57 +146,19 @@ class Game {
 		this.camera.stop.up = top;
 
 		// display speech dialog
-		if (bottom && this.player.face('down')) {
-			const _x = x + width/2;
-			const _y = y + height + this.collisionOffset;
-			this._handleSpeech(_x, _y, mapCollision, npcCollision);
-		} else if (top && this.player.face('up'))  {
-			const _x = x + width/2;
-			const _y = y - this.collisionOffset;
-			this._handleSpeech(_x, _y, mapCollision, npcCollision);
-		} else if (right && this.player.face('right'))  {
-			const _x = x + width + this.collisionOffset;
-			const _y =  y + height/2;
-			this._handleSpeech(_x, _y, mapCollision, npcCollision);
-		} else if (left && this.player.face('left'))  {
-			const _x = x - this.collisionOffset;
-			const _y =  y + height/2;
-			this._handleSpeech(_x, _y, mapCollision, npcCollision);
+		if (bottom && this.player.face('down') ||
+			top && this.player.face('up') ||
+			right && this.player.face('right') ||
+			left && this.player.face('left')) {
+				this._handleSpeech(npcIndex);
 		} else {
 			this._cancelSpeechDialog();
 		}
 	}
 
-
-	_handleSpeech(x, y, mapCollision, npcCollision) {
-		if (this._speechDialogInvoked) return;
-
-		const isMapElement = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
-		const isNPC = Object.values(npcCollision).reduce((acc, value) => acc || value, false);
-
-		if (isMapElement) {
-			const element = this.map.getElement(x, y);
-			switch (element) {
-				case WORLD.elements.ocean[0]:
-					this._displaySpeechDialog({
-						name: 'Jimmy',
-						text: 'I can\'t swim!'
-					});
-					break;
-				case WORLD.elements.tree[0]:
-					this._displaySpeechDialog({
-						name: 'Jimmy',
-						text: 'I like trees!'
-					});
-					break;
-				default:
-					break;
-			}
-		}
-
-		if (isNPC) {
-			this._displaySpeechDialog(this.npc.dialog);
-		}
+	_handleSpeech(npcIndex) {
+		if (this._speechDialogInvoked || typeof npcIndex !== 'number') return;
+		this._displaySpeechDialog(this.npcs[npcIndex].dialog);
 	}
 
 	_displaySpeechDialog(content) {

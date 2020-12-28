@@ -36,8 +36,7 @@ export class GameInterface {
 
   _render() {
     this._display.drawMap(0);
-    this._display.drawPlayer(this._game.getPlayerInfo());
-    this._display.drawPlayer(this._game.getNPCsInfo());
+    this._display.drawCharacters(this._game.getCharactersDisplayInfo());
     this._display.drawMap(1);
     this._display.render();
   }

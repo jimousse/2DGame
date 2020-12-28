@@ -29,7 +29,13 @@ class Display {
     this._oceanImage = this._ocean.getImage();
   }
 
-  drawPlayer({ image, frame, x, y, width, height }) {
+  drawCharacters(players) {
+    for (const player of players) {
+      this.drawCharacter(player);
+    }
+  }
+
+  drawCharacter({ image, frame, x, y, width, height }) {
     this.buffer.drawImage(
       image,
       ...frame,

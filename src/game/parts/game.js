@@ -2,8 +2,6 @@ import { WORLD, PLAYER, CAT } from './asset-info';
 import Player from './player';
 import NPC from './npc';
 
-const CAT_SPEED = 0.5;
-const NPC_MAX_DISTANCE = 400;
 class Game {
 	constructor(map, camera, dispatchFunction) {
 		this.collisionOffset = camera.speed;
@@ -12,8 +10,6 @@ class Game {
 		this.dispatchFunction = dispatchFunction;
 		this._initPlayer();
 		this._initNPCs();
-		this._npcDistance = 0;
-		this._npcHorizontalDirection = -1;
 	}
 
 	_initPlayer() {
@@ -29,7 +25,9 @@ class Game {
 			dialog: {
 				name: 'Jasper',
 				text: 'Meoooow ❤️'
-			}
+			},
+			speed: 0.5,
+			maxDistance: 400
 		});
 		this.npc.screenX = this.player.screenX - 60,
 		this.npc.screenY = this.player.screenY + 60;
@@ -38,40 +36,17 @@ class Game {
 	update() {
 		this.player.update();
 		this.collide();
-		this._npcStartMoving();
+		this.npcMove();
 	}
 
-	_npcStartMoving() {
+	npcMove() {
 		const { x, y, width, height } = this.npc;
 		const playerCollision = this.player.collision(x, y, width, height, this.collisionOffset);
 		const metPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
-		if (metPlayer) {
-			this.npc.setIdle();
-			return;
-		};
-
 		const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
 		const metOstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
-		if (metOstacle) {
-			this._npcHorizontalDirection = this._npcHorizontalDirection === 1 ? -1 : 1;
-			this._npcDistance = 0;
-		}
-		if(this._npcHorizontalDirection < 0) {
-			this.npc.moveLeft();
-			this.npc.screenX -= CAT_SPEED;
-			if (this._npcDistance > NPC_MAX_DISTANCE) {
-				this._npcHorizontalDirection = 1;
-				this._npcDistance = 0;
-			}
-		} else {
-			this.npc.moveRight();
-			this.npc.screenX += CAT_SPEED;
-			if (this._npcDistance > NPC_MAX_DISTANCE) {
-				this._npcHorizontalDirection = -1;
-				this._npcDistance = 0;
-			}
-		}
-		this._npcDistance += CAT_SPEED;
+
+		this.npc.move(metOstacle, metPlayer);
 	}
 
 	getPlayerInfo() {

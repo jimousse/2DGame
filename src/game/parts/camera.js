@@ -20,22 +20,22 @@ class Camera {
 
   moveRight() {
     if (this.stop.right) return;
-    this.x += CAMERA_SPEED;
+    this.x += this.speed;
   }
 
   moveLeft() {
     if (this.stop.left) return;
-    this.x -= CAMERA_SPEED;
+    this.x -= this.speed;
   }
 
   moveUp() {
     if (this.stop.up) return;
-    this.y -= CAMERA_SPEED;
+    this.y -= this.speed;
   }
 
   moveDown() {
     if (this.stop.down) return;
-    this.y += CAMERA_SPEED;
+    this.y += this.speed;
   }
 
   reset() {

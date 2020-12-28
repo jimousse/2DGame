@@ -17,7 +17,7 @@ class Game {
 	}
 
 	_initPlayer() {
-		this.player = new Player(PLAYER);
+		this.player = new Player(PLAYER, this.camera);
 		this.player.screenX = this.camera.width/2;
 		this.player.screenY = this.camera.height/2;
 	}
@@ -29,23 +29,20 @@ class Game {
 			dialog: {
 				name: 'Jasper',
 				text: 'Meoooow ❤️'
-			},
-			coord: { // 🤷🏻‍♂️
-				screenX: this.player.screenX - 60,
-				screenY: this.player.screenY + 60
 			}
 		});
+		this.npc.screenX = this.player.screenX - 60,
+		this.npc.screenY = this.player.screenY + 60;
 	}
 
 	update() {
-		this.updatePlayerCoordinates();
+		this.player.update();
 		this.collide();
 		this._npcStartMoving();
 	}
 
 	_npcStartMoving() {
-		const { x,y } = this.npc.coordinates;
-		const { width, height } = this.npc;
+		const { x, y, width, height } = this.npc;
 		const playerCollision = this.player.collision(x, y, width, height, this.collisionOffset);
 		const metPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
 		if (metPlayer) {
@@ -61,16 +58,14 @@ class Game {
 		}
 		if(this._npcHorizontalDirection < 0) {
 			this.npc.moveLeft();
-			this.npc.coordinates.screenX -= CAT_SPEED;
-			this.npc._updateCoordinates();
+			this.npc.screenX -= CAT_SPEED;
 			if (this._npcDistance > NPC_MAX_DISTANCE) {
 				this._npcHorizontalDirection = 1;
 				this._npcDistance = 0;
 			}
 		} else {
 			this.npc.moveRight();
-			this.npc.coordinates.screenX += CAT_SPEED;
-			this.npc._updateCoordinates();
+			this.npc.screenX += CAT_SPEED;
 			if (this._npcDistance > NPC_MAX_DISTANCE) {
 				this._npcHorizontalDirection = -1;
 				this._npcDistance = 0;
@@ -80,14 +75,7 @@ class Game {
 	}
 
 	getPlayerInfo() {
-		return {
-			image: this.player.getImage(),
-			frame: this.player.getCurrentFrame(),
-			x: this.player.screenX,
-			y: this.player.screenY,
-			width: this.player.width,
-			height: this.player.height
-		};
+		return this.player.getDisplayInfo();
 	}
 
 	getNPCsInfo() {
@@ -97,42 +85,32 @@ class Game {
 	moveLeft() {
 		this.camera.moveLeft();
 		this.player.moveLeft();
-		if (!this.camera.stop.left) {
-			this.npc.coordinates.screenX += this.camera.speed;
-		}
+		this.npc.keepImmobile('left');
+
 	}
 
 	moveRight() {
 		this.camera.moveRight();
 		this.player.moveRight();
-		if (!this.camera.stop.right) {
-			this.npc.coordinates.screenX -= this.camera.speed;
-		}
+		this.npc.keepImmobile('right');
 	}
 
 	moveUp() {
 		this.camera.moveUp();
 		this.player.moveUp();
-		if (!this.camera.stop.up) {
-			this.npc.coordinates.screenY += this.camera.speed;
-		}
+		this.npc.keepImmobile('up');
+
 	}
 
 	moveDown() {
 		this.camera.moveDown();
 		this.player.moveDown();
-		if (!this.camera.stop.down) {
-			this.npc.coordinates.screenY -= this.camera.speed;
-		}
+		this.npc.keepImmobile('down');
+
 	}
 
 	setIdle() {
 		this.player.setIdle();
-	}
-
-	updatePlayerCoordinates() {
-		this.player.x = this.player.screenX + this.camera.x;
-		this.player.y = this.player.screenY + this.camera.y;
 	}
 
 	collide() {

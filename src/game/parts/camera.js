@@ -4,9 +4,9 @@ const CAMERA_SPEED = 3;
  * map - instance of GameMap
  */
 class Camera {
-  constructor(width, height) {
-    this.x = width/2;
-    this.y = height/2;
+  constructor(width, height, x, y) {
+    this.x = x;
+    this.y = y;
     this.width = width;
     this.height = height;
     this.speed = CAMERA_SPEED;

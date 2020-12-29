@@ -4,7 +4,7 @@ import { KEYS } from './constants';
 class CoolGame extends LitElement {
 	constructor() {
 		super();
-		this._margin = 10;
+		this._margin = 0;
 		this._controllerClickHandlers = {
 			right: {
 				mouseDown: () => { this.gameInterface.playerGoRight();},
@@ -47,10 +47,8 @@ class CoolGame extends LitElement {
 	connectedCallback() {
 		super.connectedCallback();
 		this.addEventListener('game-speech', this._handleSpeechEvent);
-		this._canvasSize = Math.min(
-			document.documentElement.clientWidth - 2 * this._margin,
-			document.documentElement.clientHeight - 2 * this._margin
-		);
+		this._canvasWidth = document.documentElement.clientWidth - 2 * this._margin;
+		this._canvasHeight = document.documentElement.clientHeight - 2 * this._margin;
 		window.addEventListener('keydown', ({ key }) => {
 			switch (key) {
 				case KEYS.ARROW_LEFT:
@@ -92,26 +90,27 @@ class CoolGame extends LitElement {
 	}
 
 	render() {
-		const controllerRadius = this._canvasSize/6; // just trying 🤷🏻‍♂️
-		const contollerTop = this._canvasSize - 2 * controllerRadius;
-		const speechMargin = 20;
+		const controllerRadius = Math.min(this._canvasHeight, this._canvasWidth)/6; // 🤷🏻‍♂️
+		const contollerTop = this._canvasHeight - 2 * controllerRadius;
+		const contollerLeft = this._canvasWidth - 2 * controllerRadius;
+		const speechMargin = 20; // 🤷🏻‍♂️
 		return html`
 			<div>
 				<canvas
 					id="game-canvas"
-					height="${this._canvasSize}px"
-					width="${this._canvasSize}px"
+					height="${this._canvasHeight}px"
+					width="${this._canvasWidth}px"
 					style="margin: ${this._margin}px">
 				</canvas>
 				<virtual-controller
 					class="on-screen-controller"
 					radius=${controllerRadius}
-					style="top: ${contollerTop}px; left: ${contollerTop}px;"
+					style="top: ${contollerTop}px; left: ${contollerLeft}px;"
 					.clickHandlers=${this._controllerClickHandlers}>
 				</virtual-controller>
 				${this._showSpeechDialog ?
 					html`<text-dialog
-						top=${this._canvasSize + this._margin - speechMargin}
+						top=${this._canvasHeight + this._margin - speechMargin}
 						left=${this._margin + speechMargin}
 						text=${this._text}
 						name=${this._name} />` : null}

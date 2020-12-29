@@ -8,6 +8,25 @@ class Game {
 		this.map = map;
 		this.camera = camera;
 		this.dispatchFunction = dispatchFunction;
+		this._cats = [
+			{
+				name: 'Jasper',
+				text: 'Meoooow ❤️',
+				speed: 0.5,
+				maxDistance: 400
+			},
+			{
+				name: 'Tom',
+				text: 'Woof woof 🐶',
+				speed: 0
+			},
+			{
+				name: 'Figaro',
+				text: 'Got any food?',
+				speed: 0.3,
+				maxDistance: 200
+			}
+		];
 		this._initPlayer();
 		this._initNPCs();
 	}
@@ -19,44 +38,40 @@ class Game {
 	}
 
 	_initNPCs() {
-		this.npcs = [
-			new NPC({
+		this.npcs = this._cats.map(npcDesc => {
+			const initialPosition = this._getRandomGrassCoordinates();
+			return new NPC({
 				assetInfo: CAT,
 				camera: this.camera,
 				dialog: {
-					name: 'Jasper',
-					text: 'Meoooow ❤️'
+					name: npcDesc.name,
+					text: npcDesc.text
 				},
-				speed: 0.5,
-				maxDistance: 400,
-				screenX: this.player.screenX - 60,
-				screenY: this.player.screenY + 100
-			}),
-			new NPC({
-				assetInfo: CAT,
-				camera: this.camera,
-				dialog: {
-					name: 'Tom',
-					text: 'Woof woof 🐶'
-				},
-				speed: 0,
-				screenX: this.player.screenX + 100,
-				screenY: this.player.screenY - 60
-			}),
-			new NPC({
-				assetInfo: CAT,
-				camera: this.camera,
-				dialog: {
-					name: 'Figaro',
-					text: 'Got any food?'
-				},
-				initialDirection: 'left',
-				speed: 0.3,
-				maxDistance: 100,
-				screenX: this.player.screenX + 200,
-				screenY: this.player.screenY + 200
-			})
-		];
+				speed: npcDesc.speed,
+				maxDistance: npcDesc.maxDistance,
+				screenX: initialPosition[0] - this.camera.x + this.collisionOffset,
+				screenY: initialPosition[1] - this.camera.y + this.collisionOffset
+			});
+		});
+	}
+
+	_getRandomGrassCoordinates() {
+		let randomIndex = Math.floor(Math.random()*this.map.grassPositions.length);
+		let pickNext = true;
+		let position;
+		while(pickNext) {
+			position = this.map.grassPositions[randomIndex];
+			const playerCollision = this.player.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
+			const mapCollision = this.map.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
+			const inPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
+			const inObstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
+			if (inPlayer || inObstacle) {
+				randomIndex++;
+			} else {
+				pickNext = false;
+			}
+		}
+		return position;
 	}
 
 	update() {

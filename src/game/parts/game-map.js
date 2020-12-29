@@ -3,14 +3,13 @@ import { ImageLoader, MultiMixins, CollisionDetector } from '../mixins/index.js'
 const BORDER_CONTENT = 6;
 
 class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
-	constructor(params) {
-		super(params);
-		for (const [ prop, value ] of Object.entries(params)) {
+	constructor(assetInfo, cameraWidth, cameraHeight) {
+		super(assetInfo);
+		for (const [ prop, value ] of Object.entries(assetInfo)) {
 			if (value === undefined) continue;
 			this[prop] = value;
 		}
-		const { cameraSize, size } = params;
-		this._borderLength = Math.ceil(cameraSize / (2 * size));
+		this.borderLength = Math.ceil(Math.max(cameraHeight, cameraWidth) / (2*assetInfo.size));
 		this._buildColisionMap();
 		this._buildCompleteMap();
 	}
@@ -33,15 +32,22 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 	 * - a border, non playable around the playable area
 	 */
 	_buildCompleteMap() {
-		this.layers = [ this._addBorder(this.playableArea, this.rows, this.cols, this._borderLength, BORDER_CONTENT) ];
-		this.rows = this.rows + 2 * this._borderLength; // new number of rows of the full map
-		this.cols = this.cols + 2 * this._borderLength; // new number of columns of the full map
+		this.layers = [ this._addBorder(this.playableArea, this.rows, this.cols, this.borderLength, BORDER_CONTENT) ];
+		this.rows = this.rows + 2 * this.borderLength; // new number of rows of the full map
+		this.cols = this.cols + 2 * this.borderLength; // new number of columns of the full map
 		this._buildTopLayer();
 	}
 
 	_buildTopLayer() {
 		let topLayer = new Array(this.rows*this.cols).fill(0);
+		this.grassPositions = [];
 		this.layers[0].forEach((tile, i) => {
+			if (tile === this.elements.grass[0]) {
+				this.grassPositions.push([
+					Math.floor(i / this.rows) * this.size, // x
+					(i % this.rows) * this.size
+				]);
+			}
 			for (const [ element, layers ] of Object.entries(this.elements)) {
 				if (layers.length >= 2) {
 					if (tile === layers[0]) {
@@ -59,7 +65,7 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 			if (e === 3) return  1;
 			return 0;
 		});
-		this._collisionMap = this._addBorder(playableAreaCollisionMap, this.rows, this.cols, this._borderLength, 1);
+		this._collisionMap = this._addBorder(playableAreaCollisionMap, this.rows, this.cols, this.borderLength, 1);
 	}
 
 	/**

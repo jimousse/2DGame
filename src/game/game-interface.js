@@ -25,13 +25,40 @@ export class GameInterface {
   }
 
   _init() {
-    const { cameraSize } = WORLD;
     this._controller = new Controller();
-    this._camera = new Camera(cameraSize, cameraSize);
-    this._gameMap = new GameMap(WORLD);
-    this._display = new Display(this.canvas, this._gameMap, this._camera, cameraSize, cameraSize);
+    const { cameraWidth, cameraHeight } = this._computeCameraDimensions();
+    this._gameMap = new GameMap(WORLD, cameraWidth, cameraHeight);
+    const { cameraX, cameraY } = this._computeCameraInitPosition(cameraWidth, cameraHeight);
+    this._camera = new Camera(cameraWidth, cameraHeight, cameraX, cameraY);
+    this._display = new Display(this.canvas, this._gameMap, this._camera, cameraWidth, cameraHeight);
     this._game = new Game(this._gameMap, this._camera, this._dispatchEvent.bind(this));
     this._engine = new Engine(this._render.bind(this), this._update.bind(this));
+  }
+
+  _computeCameraDimensions() {
+    const { cameraSize } = WORLD;
+    let ratioWidth, ratioHeight;
+    const canvasHeight = this.canvas.height;
+    const canvasWidth = this.canvas.width;
+    if (canvasHeight > canvasWidth) {
+      ratioWidth = 1;
+      ratioHeight = canvasHeight/canvasWidth;
+    } else {
+      ratioHeight = 1;
+      ratioWidth = canvasWidth/canvasHeight;
+    }
+    return {
+      cameraHeight: cameraSize*ratioHeight,
+      cameraWidth: cameraSize*ratioWidth
+    };
+  }
+
+  _computeCameraInitPosition(cameraWidth, cameraHeight) {
+    const firstGrassPosition = this._gameMap.grassPositions[0];
+    return {
+      cameraX: firstGrassPosition[0] - cameraWidth/2,
+      cameraY: firstGrassPosition[1] - cameraHeight/2
+    };
   }
 
   _render() {

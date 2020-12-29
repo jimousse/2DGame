@@ -1,6 +1,7 @@
 import { PLAYER, CAT } from './asset-info';
 import Player from './player';
 import NPC from './npc';
+import CATS from './npc-cats.json';
 
 class Game {
 	constructor(map, camera, dispatchFunction) {
@@ -8,25 +9,7 @@ class Game {
 		this.map = map;
 		this.camera = camera;
 		this.dispatchFunction = dispatchFunction;
-		this._cats = [
-			{
-				name: 'Jasper',
-				text: 'Meoooow ❤️',
-				speed: 0.5,
-				maxDistance: 400
-			},
-			{
-				name: 'Tom',
-				text: 'Woof woof 🐶',
-				speed: 0
-			},
-			{
-				name: 'Figaro',
-				text: 'Got any food?',
-				speed: 0.3,
-				maxDistance: 200
-			}
-		];
+		this._availableInitialPositions = [ ...this.map.grassPositions ];
 		this._initPlayer();
 		this._initNPCs();
 	}
@@ -38,8 +21,8 @@ class Game {
 	}
 
 	_initNPCs() {
-		this.npcs = this._cats.map(npcDesc => {
-			const initialPosition = this._getRandomGrassCoordinates();
+		this.npcs = CATS.map(npcDesc => {
+			const position = this._getRandomInitialPosition();
 			return new NPC({
 				assetInfo: CAT,
 				camera: this.camera,
@@ -49,28 +32,36 @@ class Game {
 				},
 				speed: npcDesc.speed,
 				maxDistance: npcDesc.maxDistance,
-				screenX: initialPosition[0] - this.camera.x + this.collisionOffset,
-				screenY: initialPosition[1] - this.camera.y + this.collisionOffset
+				screenX: position[0] - this.camera.x + this.collisionOffset,
+				screenY: position[1] - this.camera.y + this.collisionOffset
 			});
 		});
 	}
 
-	_getRandomGrassCoordinates() {
-		let randomIndex = Math.floor(Math.random()*this.map.grassPositions.length);
+	/**
+	 * This method returns one of those position and ensures that
+	 * there's no collision with map elements and the player.
+	 * Once a position is returned, it is removed from this._availableInitialPositions
+	 * to avoid having two NPCs with the same initial position.
+	 */
+	_getRandomInitialPosition() {
+		let index = Math.floor(Math.random()*(this._availableInitialPositions.length - 1));
 		let pickNext = true;
 		let position;
 		while(pickNext) {
-			position = this.map.grassPositions[randomIndex];
+			position = this.map.grassPositions[index];
 			const playerCollision = this.player.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
 			const mapCollision = this.map.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
 			const inPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
 			const inObstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
 			if (inPlayer || inObstacle) {
-				randomIndex++;
+				index = (index + 1) % (this._availableInitialPositions.length - 1);
 			} else {
 				pickNext = false;
 			}
 		}
+		// remove from available position to avoid clash
+		this._availableInitialPositions.splice(index, 1);
 		return position;
 	}
 

@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Jasper",
+    "text": "Meoooow ❤️",
+    "speed": 0.5,
+    "maxDistance": 400
+  },
+  {
+    "name": "Tom",
+    "text": "Woof woof 🐶",
+    "speed": 0
+  },
+  {
+    "name": "Figaro",
+    "text": "Got any food?",
+    "speed": 0.3,
+    "maxDistance": 200
+  },
+  {
+    "name": "Fluffy",
+    "text": "Welcome to Cat Island!",
+    "speed": 0,
+    "maxDistance": 1000
+  }
+]

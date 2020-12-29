@@ -38,6 +38,11 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 		this._buildTopLayer();
 	}
 
+	/**
+	 * Completes the map with the top layers for elements
+	 * that have 2 stacked layers
+	 * Also keeps track of the grass positions for later use in the Game class.
+	 */
 	_buildTopLayer() {
 		let topLayer = new Array(this.rows*this.cols).fill(0);
 		this.grassPositions = [];
@@ -60,6 +65,14 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 		this.layers[1] = topLayer;
 	}
 
+
+	/**
+	 * Builds an array that contain the same number of elements
+	 * as the map this.layer[0] and this.layer[1].
+	 * Filled with 0s and 1s.
+	 * 0 means no collision
+	 * 1 means collision
+	 */
 	_buildColisionMap() {
 		let playableAreaCollisionMap = this.playableArea.map(e => {
 			if (e === 3) return  1;
@@ -80,6 +93,12 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 		return Boolean(this._collisionMap[row * this.cols + col]);
 	}
 
+	/**
+	 * Given a pair of coordinates, returns the element
+	 * which the point (x,y) belongs to.
+	 * @param {Number} x
+	 * @param {Number} y
+	 */
 	getElement(x,y) {
 		const col = Math.floor(x / this.size);
 		const row = Math.floor(y / this.size);

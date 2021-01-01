@@ -2,24 +2,28 @@
   {
     "name": "Jasper",
     "text": "Meoooow ❤️",
-    "speed": 0.5,
-    "maxDistance": 400
+    "speed": 0.3,
+    "maxDistance": 400,
+    "initialDirection": "right"
   },
   {
     "name": "Tom",
     "text": "Woof woof 🐶",
-    "speed": 0
+    "speed": 0.7,
+    "initialDirection": "left"
   },
   {
     "name": "Figaro",
     "text": "Got any food?",
     "speed": 0.3,
-    "maxDistance": 200
+    "maxDistance": 200,
+    "initialDirection": "up"
   },
   {
     "name": "Fluffy",
     "text": "Miaouuuu!",
-    "speed": 0,
-    "maxDistance": 1000
+    "speed": 0.5,
+    "maxDistance": 1000,
+    "initialDirection": "down"
   }
 ]

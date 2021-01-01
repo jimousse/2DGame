@@ -32,6 +32,7 @@ class Game {
 				},
 				speed: npcDesc.speed,
 				maxDistance: npcDesc.maxDistance,
+				initialDirection: npcDesc.initialDirection,
 				screenX: position[0] - this.camera.x + this.collisionOffset,
 				screenY: position[1] - this.camera.y + this.collisionOffset
 			});
@@ -72,14 +73,18 @@ class Game {
 	}
 
 	npcsMove() {
-		for (const npc of this.npcs) {
+		this.npcs.forEach((npc, i) => {
+			debugger;
+			let otherNPCs = [ ...this.npcs ];
+			otherNPCs.splice(i, 1);
 			const { x, y, width, height } = npc;
 			const playerCollision = this.player.collision(x, y, width, height, this.collisionOffset);
-			const metPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
+			const { collision: npcCollision } = this.checkNPCsCollision(otherNPCs, { x, y, width, height });
 			const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
 			const metOstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
-			npc.move(metOstacle, metPlayer);
-		}
+			const metNPC = Object.values(npcCollision).reduce((acc, value) => acc || value, false);
+			npc.move(metOstacle, playerCollision, metNPC);
+		});
 	}
 
 	getCharactersDisplayInfo() {
@@ -126,10 +131,10 @@ class Game {
 		this.player.setIdle();
 	}
 
-	checkNPCsCollision({ x, y, width, height }) {
+	checkNPCsCollision(npcList, { x, y, width, height }) {
 		const collision = { left: false, right: false, top: false, bottom: false };
 		let npcIndex = null;
-		this.npcs.forEach((npc, i) =>{
+		npcList.forEach((npc, i) =>{
 			const currentCollision = npc.collision(x, y, width, height,  this.collisionOffset);
 			collision.left = collision.left || currentCollision.left;
 			collision.right = collision.right || currentCollision.right;
@@ -150,7 +155,7 @@ class Game {
 
 		// get collision info
 		const mapCollision = this.map.collision(x, y, width, height, this.collisionOffset);
-		const { collision: npcCollision, npcIndex } = this.checkNPCsCollision({ x, y, width, height });
+		const { collision: npcCollision, npcIndex } = this.checkNPCsCollision(this.npcs, { x, y, width, height });
 
 		const left = mapCollision.left || npcCollision.left;
 		const right = mapCollision.right || npcCollision.right;

@@ -4,7 +4,6 @@ class NPC extends Player {
   constructor({
     assetInfo,
     camera,
-    initialDirection = 'down',
     ...rest
   } = {}) {
     super(assetInfo, camera);
@@ -12,12 +11,12 @@ class NPC extends Player {
 			if (value === undefined) continue;
 			this[prop] = value;
 		}
-		this._setInitialDirection(initialDirection);
+		this._setInitialDirection();
 		this._distanceTraveled = 0;
   }
 
-  _setInitialDirection(dir) {
-    switch (dir) {
+  _setInitialDirection() {
+    switch (this.initialDirection) {
       case 'down':
         this.moveDown();
         break;
@@ -31,6 +30,7 @@ class NPC extends Player {
         this.moveLeft();
         break;
       default:
+        this.moveDown();
         break;
     }
   }
@@ -71,20 +71,46 @@ class NPC extends Player {
    * Defines how the NPC moves on the map
    * and how it reacts when meeting an obstacle or the main player
    * @param {Boolean} mapCollision - met an obstacle on the map
-   * @param {Boolean} playerCollision - met the main player
+   * @param {Object} playerCollision - collision info with player
+   * @param {Boolean} metOtherNPCs - met other NPCs
    */
-  move(mapCollision, playerCollision) {
-		if (playerCollision || !this.speed) {
+  move(mapCollision, playerCollision, metOtherNPCs) {
+    // handle player collision
+		if (playerCollision.left) {
+		  if (!this.face('left')) this.moveLeft();
+		  this.setIdle();
+		  return;
+		} else if (playerCollision.right) {
+		  if (!this.face('right')) this.moveRight();
+		  this.setIdle();
+		  return;
+		} else if (playerCollision.top) {
+      if (!this.face('up')) this.moveUp();
+		  this.setIdle();
+		  return;
+		} else if (playerCollision.bottom) {
+      if (!this.face('down')) this.moveDown();
+		  this.setIdle();
+		  return;
+		}
+
+    // look down when immobile
+    if (!this.speed) {
 			this.setIdle();
 			return;
 		};
 
-		if (mapCollision) {
+    // change direction if met obstacle or met NPC
+		if (mapCollision || metOtherNPCs) {
 		  // reset distance and turn around
       if (this.face('left')) {
         this.moveRight();
-      } else {
+      } else if (this.face('right')) {
         this.moveLeft();
+      } else if (this.face('up')) {
+        this.moveDown();
+      } else if (this.face('down')) {
+        this.moveUp();
       }
       this._distanceTraveled = 0;
 		}
@@ -92,19 +118,30 @@ class NPC extends Player {
 		if (this.face('left')) {
 		  this.moveLeft();
 		  this.screenX -= this.speed;
-		  if (this._distanceTraveled > this.maxDistance) {
-		    this.moveRight();
-		    this._distanceTraveled = 0;
-		  }
-		} else {
+		} else if (this.face('right')) {
 		  this.moveRight();
       this.screenX += this.speed;
-		  if (this._distanceTraveled > this.maxDistance) {
-		    this.moveLeft();
-		    this._distanceTraveled = 0;
-		  }
+		} else if (this.face('up')) {
+      this.moveUp();
+      this.screenY -= this.speed;
+		} else if (this.face('down')) {
+      this.moveDown();
+      this.screenY += this.speed;
 		}
-		this._distanceTraveled += this.speed;
+
+    if (this._distanceTraveled > this.maxDistance) {
+      this._randomlyDirectionMove();
+      this._distanceTraveled = 0;
+    } else {
+      this._distanceTraveled += this.speed;
+    }
+  }
+
+  _randomlyDirectionMove() {
+    const allDirection = [ this.moveLeft, this.moveRight, this.moveUp, this.moveDown ];
+    const randomIndex = Math.floor(Math.random()*(allDirection.length));
+    const randomMethod = allDirection[randomIndex];
+    randomMethod.bind(this)();
   }
 }
 

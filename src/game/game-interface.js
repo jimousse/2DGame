@@ -53,7 +53,7 @@ export class GameInterface {
   }
 
   _computeCameraInitPosition(cameraWidth, cameraHeight) {
-    const firstGrassPosition = this._gameMap.grassPositions[0];
+    const firstGrassPosition = this._gameMap.grassPositions[100];
     return {
       cameraX: firstGrassPosition[0] - cameraWidth/2,
       cameraY: firstGrassPosition[1] - cameraHeight/2

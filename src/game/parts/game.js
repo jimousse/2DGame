@@ -23,7 +23,6 @@ class Game {
 	_initNPCs() {
 		this.npcs = CATS.map(npcDesc => {
 			const position = this._getRandomInitialPosition();
-			console.log(position);
 			return new NPC({
 				assetInfo: npcDesc.asset,
 				camera: this.camera,

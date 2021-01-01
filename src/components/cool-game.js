@@ -32,8 +32,8 @@ class CoolGame extends LitElement {
 				bottom: 0px;
 				right: 0px;
 				user-select: none;
-				height: 25vw;
-				width: 25vw;
+				height: min(min(50vw, 50vh), 400px);
+				width: min(min(50vw, 50vh), 400px);
 				margin: 5px;
 			}
 			#speech-bubble {

@@ -84,6 +84,42 @@ export const CAT2 = {
   delay: 10
 };
 
+export const CAT3 = {
+  src: './assets/cat-frames-3.png',
+  cols: 2,
+  rows: 1,
+  size: 40, // tile size
+  moveSequences: {
+    'idle_down': [ [ 1, 0 ], [ 1, 3 ] ],  // initial state
+    'idle_up': [ [ 4, 0 ], [ 4, 3 ] ],
+    'idle_left': [ [ 2, 0 ], [ 2, 3 ] ],
+    'idle_right': [ [ 3, 0 ], [ 3, 3 ] ],
+    'walk_up': [ [ 4, 1 ], [ 4, 2 ] ],
+    'walk_right': [ [ 3, 1 ], [ 3, 0 ],  [ 3, 2 ], [ 3, 3 ] ],
+    'walk_left': [ [ 2, 1 ], [ 2, 0 ],  [ 2, 2 ], [ 2, 3 ] ],
+    'walk_down': [ [ 1, 1 ], [ 1, 0 ], [ 1, 2 ], [ 1, 3 ] ]
+  },
+  delay: 10
+};
+
+export const CAT4 = {
+  src: './assets/cat-frames-4.png',
+  cols: 2,
+  rows: 1,
+  size: 40, // tile size
+  moveSequences: {
+    'idle_down': [ [ 1, 0 ], [ 1, 3 ] ],  // initial state
+    'idle_up': [ [ 4, 0 ], [ 4, 3 ] ],
+    'idle_left': [ [ 2, 0 ], [ 2, 3 ] ],
+    'idle_right': [ [ 3, 0 ], [ 3, 3 ] ],
+    'walk_up': [ [ 4, 1 ], [ 4, 2 ] ],
+    'walk_right': [ [ 3, 1 ], [ 3, 0 ],  [ 3, 2 ], [ 3, 3 ] ],
+    'walk_left': [ [ 2, 1 ], [ 2, 0 ],  [ 2, 2 ], [ 2, 3 ] ],
+    'walk_down': [ [ 1, 1 ], [ 1, 0 ], [ 1, 2 ], [ 1, 3 ] ]
+  },
+  delay: 10
+};
+
 export const OCEAN = {
   src: './assets/ocean-four-frames.png',
   cols: 3,

@@ -1,4 +1,4 @@
-import { CAT, CAT2 } from './asset-info';
+import { CAT, CAT2, CAT3, CAT4 } from './asset-info';
 export const CATS = [
   {
     asset: CAT,
@@ -16,7 +16,7 @@ export const CATS = [
     initialDirection: "left"
   },
   {
-    asset: CAT,
+    asset: CAT3,
     name: "Figaro",
     text: "Got any food?",
     speed: 0.3,
@@ -24,7 +24,7 @@ export const CATS = [
     initialDirection: "up"
   },
   {
-    asset: CAT2,
+    asset: CAT4,
     name: "Fluffy",
     text: "Miaouuuu!",
     speed: 0.5,

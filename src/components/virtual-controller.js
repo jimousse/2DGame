@@ -1,5 +1,4 @@
-import { LitElement, svg, css  } from 'lit-element';
-
+import { LitElement, svg  } from 'lit-element';
 class VirtualController extends LitElement {
 
   constructor() {
@@ -7,14 +6,31 @@ class VirtualController extends LitElement {
     this._clickedOpacity = 1;
     this._defaultOpacity = 0.4;
     this._fill = '#f7ede2';
+    this._resizeObserver = new ResizeObserver(entries => {
+      entries.forEach(entry => entry.target.resizedCallback());
+    });
   }
 
 
   static get properties() {
     return {
-      radius: { type: Number },
       clickHandlers: { type: Object }
     };
+  }
+
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._resizeObserver.observe(this);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._resizeObserver.unobserve(this);
+  }
+
+  resizedCallback() {
+    this.requestUpdate();
   }
 
   _mouseDownHandler(event, dir) {
@@ -62,24 +78,24 @@ class VirtualController extends LitElement {
   }
 
   render() {
-    const svgWidth = 2*this.radius;
-    const svgHeight = 2*this.radius;
-    const buttonSize = svgHeight/3;
+    const { width, height } = this.getBoundingClientRect();
+    const radius = height/2;
+    const buttonSize = height/3;
     const buttons = [
-      { dir: 'up', x: svgWidth/3, y: 0 },
-      { dir: 'down', x: svgWidth/3, y: 2*svgHeight/3 },
-      { dir: 'right', x: 2*svgWidth/3, y: svgHeight/3 },
-      { dir: 'left', x: 0, y: svgHeight/3 }
+      { dir: 'up', x: width/3, y: 0 },
+      { dir: 'down', x: width/3, y: 2*height/3 },
+      { dir: 'right', x: 2*width/3, y: height/3 },
+      { dir: 'left', x: 0, y: height/3 }
     ];
     return svg`
       <svg
-        viewBox="0 0 ${svgWidth} ${svgHeight}"
-        width="${svgWidth}"
-        height="${svgHeight}"
+        viewBox="0 0 ${width} ${height}"
+        width="${width}"
+        height="${height}"
       >
         <defs>
           <clipPath id="circle-clip">
-            <circle cx="${svgWidth/2}" cy="${svgHeight/2}" r="${this.radius}" />
+            <circle cx="${width/2}" cy="${height/2}" r="${radius}" />
           </clipPath>
       </defs>
       ${buttons.map(b =>

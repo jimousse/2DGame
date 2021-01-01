@@ -38,14 +38,13 @@ export class GameInterface {
   _computeCameraDimensions() {
     const { cameraSize } = WORLD;
     let ratioWidth, ratioHeight;
-    const canvasHeight = this.canvas.height;
-    const canvasWidth = this.canvas.width;
-    if (canvasHeight > canvasWidth) {
+    const { width, height } = this.canvas.getBoundingClientRect();
+    if (height > width) {
       ratioWidth = 1;
-      ratioHeight = canvasHeight/canvasWidth;
+      ratioHeight = height/width;
     } else {
       ratioHeight = 1;
-      ratioWidth = canvasWidth/canvasHeight;
+      ratioWidth = width/height;
     }
     return {
       cameraHeight: cameraSize*ratioHeight,

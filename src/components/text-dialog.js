@@ -13,16 +13,12 @@ class TextDialog extends LitElement {
     super();
     this.text = 'Zzzzz...';
     this.name = 'Jimmy';
-    this.left = 0;
-    this.top = 0;
   }
 
   static get properties() {
     return {
       text: { type: String },
-      name: { type: String },
-      left: { type: Number },
-      top: { type: Number }
+      name: { type: String }
     };
   }
 
@@ -41,7 +37,6 @@ class TextDialog extends LitElement {
         z-index: 2;
       }
 
-
       .speech:before {
         content: "";
         position: absolute;
@@ -53,7 +48,6 @@ class TextDialog extends LitElement {
         top: 10%;
         z-index: -1;
       }
-
 
       .speech:after {
         content: "";
@@ -100,7 +94,7 @@ class TextDialog extends LitElement {
     if (!this.text) return null;
 
     return html`
-      <div class="container" style="position: absolute; top:${this.top - MAX_HEIGHT}px; left:${this.left}px;">
+      <div class="container">
         <div class="speech">
           <div class="name">${this.name}</div>
           <div class="content">${this.text}</div>

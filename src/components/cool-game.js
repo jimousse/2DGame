@@ -4,7 +4,6 @@ import { KEYS } from './constants';
 class CoolGame extends LitElement {
 	constructor() {
 		super();
-		this._margin = 0;
 		this._controllerClickHandlers = {
 			right: {
 				mouseDown: () => { this.gameInterface.playerGoRight();},
@@ -29,10 +28,26 @@ class CoolGame extends LitElement {
 	static get styles() {
 		return css`
 			.on-screen-controller {
-				position: absolute;
+				position: fixed;
+				bottom: 0px;
+				right: 0px;
 				user-select: none;
+				height: 25vw;
+				width: 25vw;
+				margin: 5px;
+			}
+			#speech-bubble {
+				position: fixed;
+				bottom: 20px;
+				left: 20px;
+			}
+			#container {
+				height: 100%;
+				width: 100%;
 			}
 			#game-canvas {
+				height: 100%;
+				width: 100%;
 				user-select: none;
 				-webkit-touch-callout: none;
 				-webkit-user-select: none;
@@ -47,8 +62,7 @@ class CoolGame extends LitElement {
 	connectedCallback() {
 		super.connectedCallback();
 		this.addEventListener('game-speech', this._handleSpeechEvent);
-		this._canvasWidth = document.documentElement.clientWidth - 2 * this._margin;
-		this._canvasHeight = document.documentElement.clientHeight - 2 * this._margin;
+		window.addEventListener('resize', this._canvasResize.bind(this));
 		window.addEventListener('keydown', ({ key }) => {
 			switch (key) {
 				case KEYS.ARROW_LEFT:
@@ -81,37 +95,33 @@ class CoolGame extends LitElement {
 		this.requestUpdate();
 	}
 
+	_canvasResize() {
+		this._canvas.width  = this._canvas.offsetWidth;
+		this._canvas.height = this._canvas.offsetHeight;
+	}
+
 	updated() {
+		if (!this._canvas) {
+			this._canvas = this.shadowRoot.getElementById('game-canvas');
+			this._canvasResize();
+		}
 		if (!this.gameInterface) {
-			const canvas = this.shadowRoot.getElementById('game-canvas');
-			this.gameInterface = new GameInterface(canvas);
+			this.gameInterface = new GameInterface(this._canvas);
 			this.gameInterface.start();
 		}
 	}
 
 	render() {
-		const controllerRadius = Math.min(this._canvasHeight, this._canvasWidth)/6; // 🤷🏻‍♂️
-		const contollerTop = this._canvasHeight - 2 * controllerRadius;
-		const contollerLeft = this._canvasWidth - 2 * controllerRadius;
-		const speechMargin = 20; // 🤷🏻‍♂️
 		return html`
-			<div>
-				<canvas
-					id="game-canvas"
-					height="${this._canvasHeight}px"
-					width="${this._canvasWidth}px"
-					style="margin: ${this._margin}px">
-				</canvas>
+			<div id="container">
+				<canvas id="game-canvas"></canvas>
 				<virtual-controller
 					class="on-screen-controller"
-					radius=${controllerRadius}
-					style="top: ${contollerTop}px; left: ${contollerLeft}px;"
 					.clickHandlers=${this._controllerClickHandlers}>
 				</virtual-controller>
 				${this._showSpeechDialog ?
 					html`<text-dialog
-						top=${this._canvasHeight + this._margin - speechMargin}
-						left=${this._margin + speechMargin}
+						id="speech-bubble"
 						text=${this._text}
 						name=${this._name} />` : null}
 

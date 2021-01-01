@@ -4,8 +4,6 @@ import { LitElement, html, css, unsafeCSS } from 'lit-element';
 const PADDING = 30;
 const FONT_SIZE = 45;
 const FONT_FAMILY = 'Arial';
-const MAX_HEIGHT = 400;
-const MAX_WIDTH = 400;
 
 class TextDialog extends LitElement {
 
@@ -53,9 +51,9 @@ class TextDialog extends LitElement {
         content: "";
         position: absolute;
         background: #f7ede2;
-        width: 100%;
+        width: 95%;
         height: 60%;
-        left: 0;
+        left: 2%;
         border-radius: 30px;
         top: 30%;
         z-index: -1;
@@ -63,21 +61,14 @@ class TextDialog extends LitElement {
 
       .content {
         overflow-wrap: break-word;
+        max-height: 100px;
         overflow: auto;
         color: #867760;
-        max-width: ${unsafeCSS(`${MAX_WIDTH - 2*PADDING}px`)};
-        max-height: ${unsafeCSS(`${MAX_HEIGHT - 2*PADDING}px`)};
-      }
-
-      .container {
-        display: flex;
-        height: ${unsafeCSS(`${MAX_HEIGHT}px`)};
-        width: ${unsafeCSS(`${MAX_WIDTH}px`)};
       }
 
       .name {
         position: absolute;
-        top: -10%;
+        top: -5%;
         left: 7%;
         z-index: 1;
         color: #662616;
@@ -94,11 +85,9 @@ class TextDialog extends LitElement {
     if (!this.text) return null;
 
     return html`
-      <div class="container">
-        <div class="speech">
-          <div class="name">${this.name}</div>
-          <div class="content">${this.text}</div>
-        </div>
+      <div class="speech">
+        <div class="name">${this.name}</div>
+        <div class="content">${this.text}</div>
       </div>
     `;
   }

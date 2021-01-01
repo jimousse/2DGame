@@ -1,7 +1,7 @@
-import { PLAYER, CAT } from './asset-info';
+import { PLAYER } from './asset-info';
 import Player from './player';
 import NPC from './npc';
-import CATS from './npc-cats.json';
+import { CATS } from './npc-cats';
 
 class Game {
 	constructor(map, camera, dispatchFunction) {
@@ -24,7 +24,7 @@ class Game {
 		this.npcs = CATS.map(npcDesc => {
 			const position = this._getRandomInitialPosition();
 			return new NPC({
-				assetInfo: CAT,
+				assetInfo: npcDesc.asset,
 				camera: this.camera,
 				dialog: {
 					name: npcDesc.name,
@@ -74,7 +74,6 @@ class Game {
 
 	npcsMove() {
 		this.npcs.forEach((npc, i) => {
-			debugger;
 			let otherNPCs = [ ...this.npcs ];
 			otherNPCs.splice(i, 1);
 			const { x, y, width, height } = npc;

@@ -68,7 +68,7 @@ class TextDialog extends LitElement {
 
       .name {
         position: absolute;
-        top: -5%;
+        top: -7%;
         left: 7%;
         z-index: 1;
         color: #662616;

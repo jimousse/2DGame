@@ -23,6 +23,7 @@ class Game {
 	_initNPCs() {
 		this.npcs = CATS.map(npcDesc => {
 			const position = this._getRandomInitialPosition();
+			console.log(position);
 			return new NPC({
 				assetInfo: npcDesc.asset,
 				camera: this.camera,
@@ -50,7 +51,7 @@ class Game {
 		let pickNext = true;
 		let position;
 		while(pickNext) {
-			position = this.map.grassPositions[index];
+			position = this._availableInitialPositions[index];
 			const playerCollision = this.player.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
 			const mapCollision = this.map.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
 			const inPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
@@ -62,7 +63,7 @@ class Game {
 			}
 		}
 		// remove from available position to avoid clash
-		this._availableInitialPositions.splice(index, 1);
+		this._availableInitialPositions.splice(index, 10);
 		return position;
 	}
 

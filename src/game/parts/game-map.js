@@ -90,7 +90,23 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 	_pointCollision(x, y) {
 		const col = Math.floor(x / this.size);
 		const row = Math.floor(y / this.size);
-		return Boolean(this._collisionMap[row * this.cols + col]);
+		const isObstacle = Boolean(this._collisionMap[row * this.cols + col]);
+		if (isObstacle) {
+			const obstacle = {
+				x: col*this.size,
+				y: row*this.size,
+				width: this.size,
+				height: this.size
+			};
+			const offset = 2;
+			const collision =  x >= (obstacle.x + offset) &&
+			x <= (obstacle.x + obstacle.width - offset) &&
+			y >= (obstacle.y + offset) &&
+			y <= (obstacle.y + obstacle.height - offset);
+			return collision;
+		} else {
+			return false;
+		}
 	}
 
 	/**

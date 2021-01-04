@@ -11,6 +11,7 @@ class Game {
 		this.dispatchFunction = dispatchFunction;
 		this._availableInitialPositions = [ ...this.map.grassPositions ];
 		this._initPlayer();
+		this.npcs = [];
 		this._initNPCs();
 	}
 
@@ -73,6 +74,7 @@ class Game {
 	}
 
 	npcsMove() {
+		if (!this.npcs) return;
 		this.npcs.forEach((npc, i) => {
 			let otherNPCs = [ ...this.npcs ];
 			otherNPCs.splice(i, 1);
@@ -89,7 +91,7 @@ class Game {
 	getCharactersDisplayInfo() {
 		return [
 			this.player.getDisplayInfo(),
-			...this.npcs.map(npc => npc.getDisplayInfo())
+			...(this.npcs ? this.npcs.map(npc => npc.getDisplayInfo()) : [])
 		];
 	}
 
@@ -132,6 +134,7 @@ class Game {
 
 	checkNPCsCollision(npcList, { x, y, width, height }) {
 		const collision = { left: false, right: false, top: false, bottom: false };
+		if (!this.npcs) return { collision };
 		let npcIndex = null;
 		npcList.forEach((npc, i) =>{
 			const currentCollision = npc.collision(x, y, width, height,  this.collisionOffset);

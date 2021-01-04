@@ -4,8 +4,8 @@ export default class Player extends MultiMixins([ ImageLoader, StateHandler, Col
 	constructor(assetInfo, camera) {
 		super(assetInfo);
 		this.camera = camera;
-		this.width = assetInfo.size;
-		this.height =  assetInfo.size;
+		this.width = (assetInfo.width || assetInfo.size);
+		this.height =  (assetInfo.height || assetInfo.size);
 	}
 
 	get screenX() {
@@ -48,9 +48,10 @@ export default class Player extends MultiMixins([ ImageLoader, StateHandler, Col
 	}
 
 	_pointCollision(x, y) {
-    return x >= this.x &&
-    x <= this.x + this.width &&
-    y >= this.y &&
-    y <= this.y + this.height;
+		const offset = 5;
+    return x >= (this.x + offset) &&
+    x <= (this.x + this.width - offset) &&
+    y >= (this.y + offset) &&
+    y <= (this.y + this.height - offset);
   }
 }

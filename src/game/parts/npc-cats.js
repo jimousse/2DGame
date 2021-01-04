@@ -10,14 +10,14 @@ export const CATS = [
   },
   {
     asset: CAT2,
-    name: "Tom",
-    text: "Woof woof 🐶",
+    name: "Pancake",
+    text: "Miaouuuu!",
     speed: 0.7,
     initialDirection: "left"
   },
   {
     asset: CAT3,
-    name: "Figaro",
+    name: "Butters",
     text: "Got any food?",
     speed: 0.3,
     maxDistance: 200,
@@ -25,8 +25,8 @@ export const CATS = [
   },
   {
     asset: CAT4,
-    name: "Fluffy",
-    text: "Miaouuuu!",
+    name: "Tom",
+    text: "Woof woof 🐶",
     speed: 0.5,
     maxDistance: 1000,
     initialDirection: "down"

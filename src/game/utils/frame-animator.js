@@ -8,11 +8,13 @@ class FrameAnimator {
   }
 
   _getTile([ row, col ]) {
+    const width = this.width || this.size;
+    const height = this.height || this.size;
     return [
-      col*this.size, // x
-      row*this.size, // y
-      this.size, // width
-      this.size // height
+      col*width, // x
+      row*height, // y
+      width, // width
+      height // height
     ];
   }
 

@@ -36,6 +36,13 @@ class Display {
   }
 
   drawCharacter({ image, frame, x, y, width, height }) {
+    // this.buffer.fillStyle = 'red';
+    // this.buffer.fillRect(
+    //   x,
+    //   y,
+    //   width,
+    //   height
+    // );
     this.buffer.drawImage(
       image,
       ...frame,

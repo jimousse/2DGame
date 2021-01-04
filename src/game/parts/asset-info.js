@@ -34,7 +34,8 @@ export const PLAYER = {
   src: './assets/moi.png',
   cols: 4,
   rows: 4,
-  size: 50, // tile size
+  width: 36, // tile size
+  height: 48, // tile size
   moveSequences: {
     'idle_down':[ [ 0, 0 ] ], // initial state
     'walk_down': [ [ 1, 0 ], [ 2, 0 ], [ 3, 0 ] ],

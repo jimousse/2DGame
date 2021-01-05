@@ -26,6 +26,8 @@ class Display {
   _init() {
     this._mapImage = this._map.getImage();
     this._tileSize = this._map.size;
+    this._ocean = new MovingElement(OCEAN);
+    this._coin = new MovingElement(COIN);
   }
 
   drawCharacters(players) {
@@ -53,10 +55,7 @@ class Display {
   }
 
   _drawOcean(x, y) {
-    if (!this._ocean) {
-      this._ocean = new MovingElement(OCEAN);
-    }
-    this._ocean.updateMovement();
+    // this._ocean.updateMovement();
     this.buffer.drawImage(
       this._ocean.getImage(), // image
       ...this._ocean.getCurrentFrame(),
@@ -68,22 +67,21 @@ class Display {
   }
 
   _drawCoin(x, y) {
-    if (!this._coin) {
-      this._coin = new MovingElement(COIN);
-    }
-    this._coin.updateMovement();
+    // this._coin.updateMovement();
     this.buffer.drawImage(
       this._coin.getImage(), // image
       ...this._coin.getCurrentFrame(),
-      x, // target x
-      y, // target y
-      this._tileSize, // target width
-      this._tileSize // target height
+      (this._tileSize/2 - this._coin.size/2 + x), // target x
+      (this._tileSize/2 - this._coin.size/2 + y), // target y
+      this._coin.size, // target width
+      this._coin.size // target height
     );
   }
 
 
   drawMap(layer) {
+    this._ocean.updateMovement();
+    this._coin.updateMovement();
     const startCol = Math.floor(this.camera.x / this._tileSize);
     const endCol = startCol + Math.floor(this.camera.width / this._tileSize) + 1;
     const startRow = Math.floor(this.camera.y / this._tileSize);

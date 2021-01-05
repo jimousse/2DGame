@@ -3,26 +3,57 @@ export const WORLD = {
   cols: 16,
   rows: 16,
   size: 64, // tile size
+  uniqueIndices: {
+    coin: 7,
+    grass: 1,
+    tree_bottom: 3,
+    tree_top: 4,
+    path: 2,
+    ocean: 6,
+    bush: 5
+  },
   elements: {
-    tree: [ 3, 4 ],
-    grass: [ 1 ],
-    path: [ 2 ],
-    ocean: [ 6 ]
+    tree: {
+      layers: [ 3 ], // tile index in the image
+      top: 4, // tile index in the image
+      key: 3 // key in playableAreaKeys
+    },
+    grass: {
+      layers: [ 1 ], // tile index in the image
+      key: 1 // key in playableAreaKeys
+    },
+    path: {
+      layers: [ 2 ], // tile index in the image
+      key: 2 // key in playableAreaKeys
+    },
+    coin: {
+      layers: [ 1, 7 ], // tile index in the image
+      key: 4 // key in playableAreaKeys
+    },
+    ocean: {
+      layers: [ 6 ], // tile index in the image
+      key: 6 // key in playableAreaKeys
+    },
+    bush: {
+      layers: [ 1, 5 ],  // tile index in the image
+      key: 5 // key in playableAreaKeys
+    }
   },
   cameraSize: 700,
-  playableArea: [
+  obstacles: new Set([ 3, 6, 5 ]), // keys here
+  playableAreaKeys: [
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
-    3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
+    3, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3,
-    3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3,
+    3, 1, 1, 5, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
-    3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3,
+    3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
-    3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3,
-    3, 1, 3, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
+    3, 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 3,
+    3, 1, 5, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
     3, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
-    3, 1, 1, 3, 1, 3, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
+    3, 1, 1, 3, 1, 5, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
     3, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 3, 1, 1, 3,
     3, 1, 3, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 3, 3,
     3, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
@@ -125,10 +156,22 @@ export const OCEAN = {
   src: './assets/ocean-four-frames.png',
   cols: 3,
   rows: 1,
-  size: 63,
+  size: 64,
   moveSequences: {
     'wave': [ [ 0,0 ], [ 0, 1 ], [ 0, 2 ], [ 0, 3 ] ]
   },
   delay: 1000
 };
+
+export const COIN = {
+  src: './assets/coin.png',
+  cols: 8,
+  rows: 1,
+  size: 16,
+  moveSequences: {
+    'rotate': [ [ 0,0 ], [ 0, 1 ], [ 0, 2 ], [ 0, 3 ], [ 0, 4 ], [ 0, 5 ], [ 0, 6 ], [ 0, 7 ] ]
+  },
+  delay: 10
+};
+
 

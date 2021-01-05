@@ -10,8 +10,8 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 			this[prop] = value;
 		}
 		this.borderLength = Math.ceil(Math.max(cameraHeight, cameraWidth) / (2*assetInfo.size));
-		this._buildColisionMap();
 		this._buildCompleteMap();
+		this._buildColisionMap();
 	}
 
 	getTile(layer = 0, col, row) {
@@ -32,11 +32,27 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 	 * - a border, non playable around the playable area
 	 */
 	_buildCompleteMap() {
-		this.layers = [ this._addBorder(this.playableArea, this.rows, this.cols, this.borderLength, BORDER_CONTENT) ];
-		this.rows = this.rows + 2 * this.borderLength; // new number of rows of the full map
-		this.cols = this.cols + 2 * this.borderLength; // new number of columns of the full map
+		this._buildBottomLayer();
 		this._buildTopLayer();
 	}
+
+		/**
+	 * Builds the full map, a square of tiles, which includes:
+	 * - the playable area in the center
+	 * - a border, non playable around the playable area
+	 */
+	_buildBottomLayer() {
+		this.entireMapOfKeys = this._addBorder(this.playableAreaKeys, this.rows, this.cols, this.borderLength, this.elements.ocean.key);
+		const mapWithTileIndices = this.entireMapOfKeys.map(key => {
+			const mapElement = Object.values(this.elements).filter(e => e.key === key)[0];
+			return mapElement.layers[0];
+		});
+		// add border
+		this.layers = [ mapWithTileIndices ];
+		this.rows = this.rows + 2 * this.borderLength; // new number of rows of the full map
+		this.cols = this.cols + 2 * this.borderLength; // new number of columns of the full map
+	}
+
 
 	/**
 	 * Completes the map with the top layers for elements
@@ -46,21 +62,23 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 	_buildTopLayer() {
 		let topLayer = new Array(this.rows*this.cols).fill(0);
 		this.grassPositions = [];
-		this.layers[0].forEach((tile, i) => {
-			if (tile === this.elements.grass[0]) {
+		this.entireMapOfKeys.forEach((key, i) => {
+			const element = Object.values(this.elements).filter(el => key === el.key)[0];
+			if (key === this.elements.grass.key) {
 				this.grassPositions.push([
 					Math.floor(i / this.rows) * this.size, // x
 					(i % this.rows) * this.size
 				]);
 			}
-			for (const [ element, layers ] of Object.entries(this.elements)) {
-				if (layers.length >= 2) {
-					if (tile === layers[0]) {
-						topLayer[i - this.rows] = layers[1];
-					}
-				}
-			}
 
+			// tile above the current tile on the top layer
+			if (element.top) {
+				topLayer[i - this.rows] = element.top;
+			}
+			// same tile index on top layer
+			if (element.layers.length > 1) {
+				topLayer[i] = element.layers[1];
+			}
 		});
 		this.layers[1] = topLayer;
 	}
@@ -74,11 +92,10 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 	 * 1 means collision
 	 */
 	_buildColisionMap() {
-		let playableAreaCollisionMap = this.playableArea.map(e => {
-			if (e === 3) return  1;
+		this._collisionMap = this.entireMapOfKeys.map(e => {
+			if (this.obstacles.has(e)) return  1;
 			return 0;
 		});
-		this._collisionMap = this._addBorder(playableAreaCollisionMap, this.rows, this.cols, this.borderLength, 1);
 	}
 
 	/**
@@ -107,18 +124,6 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * Given a pair of coordinates, returns the element
-	 * which the point (x,y) belongs to.
-	 * @param {Number} x
-	 * @param {Number} y
-	 */
-	getElement(x,y) {
-		const col = Math.floor(x / this.size);
-		const row = Math.floor(y / this.size);
-		return this.layers[0][row * this.cols + col];
 	}
 
 	/**

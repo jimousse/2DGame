@@ -55,7 +55,6 @@ class Display {
   }
 
   _drawOcean(x, y) {
-    // this._ocean.updateMovement();
     this.buffer.drawImage(
       this._ocean.getImage(), // image
       ...this._ocean.getCurrentFrame(),
@@ -67,7 +66,6 @@ class Display {
   }
 
   _drawCoin(x, y) {
-    // this._coin.updateMovement();
     this.buffer.drawImage(
       this._coin.getImage(), // image
       ...this._coin.getCurrentFrame(),
@@ -92,10 +90,10 @@ class Display {
         var y = Math.floor(row * this._tileSize - this.camera.y);
         const currentTile = this._map.getTile(layer, col, row);
         switch (currentTile) {
-          case this._map.uniqueIndices.ocean:
+          case this._map.uniqueKeys.ocean:
             this._drawOcean(x, y);
             break;
-          case this._map.uniqueIndices.coin:
+          case this._map.uniqueKeys.coin:
             this._drawCoin(x, y);
             break;
           default:

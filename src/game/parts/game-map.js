@@ -47,7 +47,6 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 			const mapElement = Object.values(this.elements).filter(e => e.key === key)[0];
 			return mapElement.layers[0];
 		});
-		// add border
 		this.layers = [ mapWithTileIndices ];
 		this.rows = this.rows + 2 * this.borderLength; // new number of rows of the full map
 		this.cols = this.cols + 2 * this.borderLength; // new number of columns of the full map
@@ -61,11 +60,11 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 	 */
 	_buildTopLayer() {
 		let topLayer = new Array(this.rows*this.cols).fill(0);
-		this.grassPositions = [];
+		this.startPositions = [];
 		this.entireMapOfKeys.forEach((key, i) => {
-			const element = Object.values(this.elements).filter(el => key === el.key)[0];
-			if (key === this.elements.grass.key) {
-				this.grassPositions.push([
+			const element = this._getElementByKey(key);
+			if (key === this.elements.start_position.key) {
+				this.startPositions.push([
 					Math.floor(i / this.rows) * this.size, // x
 					(i % this.rows) * this.size
 				]);
@@ -123,6 +122,21 @@ class GameMap extends MultiMixins([ ImageLoader, CollisionDetector ]) {
 			return collision;
 		} else {
 			return false;
+		}
+	}
+
+	_getElementByKey(key) {
+		return Object.values(this.elements).filter(el => key === el.key)[0];
+	}
+
+	checkAndHideCoins({ x, y }, callback) {
+		const col = Math.floor(x / this.size);
+		const row = Math.floor(y / this.size);
+		const elementFound = this.layers[1][ row * this.cols + col ];
+		const coinKey = this.uniqueKeys.coin;
+		if (elementFound === coinKey) {
+			this.layers[1][row * this.cols + col] = 0;
+			callback();
 		}
 	}
 

@@ -1,4 +1,4 @@
-const CAMERA_SPEED = 3;
+const CAMERA_SPEED = 5;
 
 /**
  * map - instance of GameMap
@@ -20,22 +20,22 @@ class Camera {
 
   moveRight() {
     if (this.stop.right) return;
-    this.x += this.speed;
+    this.x += 1;
   }
 
   moveLeft() {
     if (this.stop.left) return;
-    this.x -= this.speed;
+    this.x -= 1;
   }
 
   moveUp() {
     if (this.stop.up) return;
-    this.y -= this.speed;
+    this.y -= 1;
   }
 
   moveDown() {
     if (this.stop.down) return;
-    this.y += this.speed;
+    this.y += 1;
   }
 
   reset() {

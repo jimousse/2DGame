@@ -3,7 +3,7 @@ export const WORLD = {
   cols: 16,
   rows: 16,
   size: 64, // tile size
-  uniqueIndices: {
+  uniqueKeys: {
     coin: 7,
     grass: 1,
     tree_bottom: 3,
@@ -26,9 +26,13 @@ export const WORLD = {
       layers: [ 2 ], // tile index in the image
       key: 2 // key in playableAreaKeys
     },
-    coin: {
+    coin_on_grass: {
       layers: [ 1, 7 ], // tile index in the image
       key: 4 // key in playableAreaKeys
+    },
+    coin_on_path: {
+      layers: [ 2, 7 ], // tile index in the image
+      key: 7 // key in playableAreaKeys
     },
     ocean: {
       layers: [ 6 ], // tile index in the image
@@ -37,6 +41,10 @@ export const WORLD = {
     bush: {
       layers: [ 1, 5 ],  // tile index in the image
       key: 5 // key in playableAreaKeys
+    },
+    start_position: {
+      layers: [ 1 ],
+      key: -1
     }
   },
   cameraSize: 700,
@@ -44,19 +52,19 @@ export const WORLD = {
   playableAreaKeys: [
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
-    3, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 3,
-    3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3,
-    3, 1, 1, 5, 1, 1, 1, 3, 1, 1, 1, 4, 4, 1, 1, 3,
+    3, 4, 4, 4, 4, 1, 4, 1, 1, 1, 4, 1, 1, 4, 1, 3,
+    3, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 1, 1, 3, 1, 3,
+    3, 1, -1, 5, 1, 1, 1, 3, 1, 1, 1, 4, 4, 1, 1, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
-    3, 1, 1, 1, 4, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 3,
+    3, 1, 1, 1, 4, 1, 1, 3, 1, 1, 5, 1, 1, 1, 1, 3,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
     3, 1, 5, 1, 1, 1, 1, 1, 1, 1, 4, 1, 5, 1, 1, 3,
-    3, 1, 5, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
-    3, 1, 4, 1, 4, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
-    3, 1, 1, 3, 1, 5, 1, 2, 2, 1, 1, 4, 1, 1, 1, 3,
-    3, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 3, 4, 1, 3,
-    3, 1, 3, 4, 1, 1, 4, 2, 2, 1, 1, 1, 1, 1, 3, 3,
     3, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
+    3, 1, 4, -1, 4, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
+    3, 1, 1, 1, 1, 5, 1, 2, 2, 1, 1, 4, 1, 1, 1, 3,
+    3, 1, 4, 1, 1, 1, 1, 7, 2, 1, 1, 1, 1, 4, 1, 3,
+    3, 1, 3, 4, 1, 1, 4, 2, 2, 1, 1, 1, -1, 1, 3, 3,
+    3, 4, 1, -1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3,
     3, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3
   ]
 };
@@ -77,7 +85,7 @@ export const PLAYER = {
     'walk_right': [ [ 1, 3 ], [ 2, 3 ], [ 3, 3 ] ],
     'idle_right':[ [ 0,3 ] ]
   },
-  delay: 7
+  delay: 5
 };
 
 export const CAT = {
@@ -156,7 +164,7 @@ export const OCEAN = {
   src: './assets/ocean-four-frames.png',
   cols: 3,
   rows: 1,
-  size: 64,
+  size: 63,
   movement: 'wave',
   moveSequences: {
     'wave': [ [ 0,0 ], [ 0, 1 ], [ 0, 2 ], [ 0, 3 ] ]

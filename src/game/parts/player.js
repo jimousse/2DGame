@@ -6,6 +6,7 @@ export default class Player extends MultiMixins([ ImageLoader, StateHandler, Col
 		this.camera = camera;
 		this.width = (assetInfo.width || assetInfo.size);
 		this.height =  (assetInfo.height || assetInfo.size);
+		this.coinsCollected = 0;
 	}
 
 	get screenX() {

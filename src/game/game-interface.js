@@ -53,10 +53,11 @@ export class GameInterface {
   }
 
   _computeCameraInitPosition(cameraWidth, cameraHeight) {
-    const firstGrassPosition = this._gameMap.grassPositions[100];
+    const firstPosition = this._gameMap.startPositions[this._gameMap.startPositions.length - 1];
+    this._gameMap.startPositions.pop();
     return {
-      cameraX: firstGrassPosition[0] - cameraWidth/2,
-      cameraY: firstGrassPosition[1] - cameraHeight/2
+      cameraX: firstPosition[0] - cameraWidth/2,
+      cameraY: firstPosition[1] - cameraHeight/2
     };
   }
 

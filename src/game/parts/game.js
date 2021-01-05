@@ -9,7 +9,7 @@ class Game {
 		this.map = map;
 		this.camera = camera;
 		this.dispatchFunction = dispatchFunction;
-		this._availableInitialPositions = [ ...this.map.grassPositions ];
+		this._availableInitialPositions = [ ...this.map.startPositions ];
 		this._initPlayer();
 		this.npcs = [];
 		this._initNPCs();
@@ -34,8 +34,8 @@ class Game {
 				speed: npcDesc.speed,
 				maxDistance: npcDesc.maxDistance,
 				initialDirection: npcDesc.initialDirection,
-				screenX: position[0] - this.camera.x + this.collisionOffset,
-				screenY: position[1] - this.camera.y + this.collisionOffset
+				screenX: position[0] - this.camera.x,
+				screenY: position[1] - this.camera.y
 			});
 		});
 	}
@@ -47,23 +47,8 @@ class Game {
 	 * to avoid having two NPCs with the same initial position.
 	 */
 	_getRandomInitialPosition() {
-		let index = Math.floor(Math.random()*(this._availableInitialPositions.length - 1));
-		let pickNext = true;
-		let position;
-		while(pickNext) {
-			position = this._availableInitialPositions[index];
-			const playerCollision = this.player.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
-			const mapCollision = this.map.collision(position[0], position[1], this.player.width, this.player.height, this.collisionOffset);
-			const inPlayer = Object.values(playerCollision).reduce((acc, value) => acc || value, false);
-			const inObstacle = Object.values(mapCollision).reduce((acc, value) => acc || value, false);
-			if (inPlayer || inObstacle) {
-				index = (index + 1) % (this._availableInitialPositions.length - 1);
-			} else {
-				pickNext = false;
-			}
-		}
-		// remove from available position to avoid clash
-		this._availableInitialPositions.splice(index, 10);
+		const position = this._availableInitialPositions[this._availableInitialPositions.length - 1];
+		this._availableInitialPositions.pop();
 		return position;
 	}
 
@@ -96,24 +81,42 @@ class Game {
 	}
 
 	moveLeft() {
-		this.camera.moveLeft();
+		for (let i = 0; i < this.camera.speed; i++) {
+			this.camera.moveLeft();
+			this.player.update();
+			this.collide();
+		}
 		this.player.moveLeft();
+			// NPCs are unaffected by the camera movement
+		// need to compensate
 		for (const npc of this.npcs) {
 			npc.keepImmobile('left');
 		}
 	}
 
 	moveRight() {
-		this.camera.moveRight();
+		for (let i = 0; i < this.camera.speed; i++) {
+			this.camera.moveRight();
+			this.player.update();
+			this.collide();
+		}
 		this.player.moveRight();
+		// NPCs are unaffected by the camera movement
+		// need to compensate
 		for (const npc of this.npcs) {
 			npc.keepImmobile('right');
 		}
 	}
 
 	moveUp() {
-		this.camera.moveUp();
+		for (let i = 0; i < this.camera.speed; i++) {
+			this.camera.moveUp();
+			this.player.update();
+			this.collide();
+		}
 		this.player.moveUp();
+		// NPCs are unaffected by the camera movement
+		// need to compensate
 		for (const npc of this.npcs) {
 			npc.keepImmobile('up');
 		}
@@ -121,8 +124,14 @@ class Game {
 	}
 
 	moveDown() {
-		this.camera.moveDown();
+		for (let i = 0; i < this.camera.speed; i++) {
+			this.camera.moveDown();
+			this.player.update();
+			this.collide();
+		}
 		this.player.moveDown();
+		// NPCs are unaffected by the camera movement
+		// need to compensate
 		for (const npc of this.npcs) {
 			npc.keepImmobile('down');
 		}
@@ -150,8 +159,6 @@ class Game {
 	}
 
 	collide() {
-		this.camera.reset();
-
 		// get player size and coord
 		const { height, width, x, y } = this.player;
 
@@ -179,6 +186,13 @@ class Game {
 		} else {
 			this._cancelSpeechDialog();
 		}
+
+		this.map.checkAndHideCoins({ x: x + width/2, y: y + height/2 }, this.foundCoin.bind(this));
+	}
+
+	foundCoin() {
+		this.player.coinsCollected++;
+		console.log(`I have ${this.player.coinsCollected} coins!`);
 	}
 
 	_handleSpeech(npcIndex) {

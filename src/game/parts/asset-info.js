@@ -157,6 +157,7 @@ export const OCEAN = {
   cols: 3,
   rows: 1,
   size: 64,
+  movement: 'wave',
   moveSequences: {
     'wave': [ [ 0,0 ], [ 0, 1 ], [ 0, 2 ], [ 0, 3 ] ]
   },
@@ -168,6 +169,7 @@ export const COIN = {
   cols: 8,
   rows: 1,
   size: 16,
+  movement: 'rotate',
   moveSequences: {
     'rotate': [ [ 0,0 ], [ 0, 1 ], [ 0, 2 ], [ 0, 3 ], [ 0, 4 ], [ 0, 5 ], [ 0, 6 ], [ 0, 7 ] ]
   },

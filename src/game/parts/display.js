@@ -1,5 +1,5 @@
-import Ocean from './ocean.js';
-import Coin from './coin.js';
+import MovingElement from './moving-element.js';
+import { OCEAN, COIN } from './asset-info.js';
 
 class Display {
   constructor(canvas, map, camera, canvasWidth, canvasHeight) {
@@ -54,9 +54,9 @@ class Display {
 
   _drawOcean(x, y) {
     if (!this._ocean) {
-      this._ocean = new Ocean();
+      this._ocean = new MovingElement(OCEAN);
     }
-    this._ocean.updateWave();
+    this._ocean.updateMovement();
     this.buffer.drawImage(
       this._ocean.getImage(), // image
       ...this._ocean.getCurrentFrame(),
@@ -69,9 +69,9 @@ class Display {
 
   _drawCoin(x, y) {
     if (!this._coin) {
-      this._coin = new Coin();
+      this._coin = new MovingElement(COIN);
     }
-    this._coin.updateCoin();
+    this._coin.updateMovement();
     this.buffer.drawImage(
       this._coin.getImage(), // image
       ...this._coin.getCurrentFrame(),

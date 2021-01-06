@@ -65,14 +65,14 @@ class Display {
     );
   }
 
-  _drawCoin(x, y) {
+  _drawCoin(x, y, size) {
     this.buffer.drawImage(
       this._coin.getImage(), // image
       ...this._coin.getCurrentFrame(),
-      (this._tileSize/2 - this._coin.size/2 + x), // target x
-      (this._tileSize/2 - this._coin.size/2 + y), // target y
-      this._coin.size, // target width
-      this._coin.size // target height
+      x, // target x
+      y, // target y
+      (size || this._coin.size), // target width
+      (size || this._coin.size) // target height
     );
   }
 
@@ -94,7 +94,9 @@ class Display {
             this._drawOcean(x, y);
             break;
           case this._map.uniqueKeys.coin:
-            this._drawCoin(x, y);
+            const _x = this._tileSize/2 - this._coin.size/2 + x;
+            const _y = this._tileSize/2 - this._coin.size/2 + y;
+            this._drawCoin(_x, _y);
             break;
           default:
             this._drawMapElement(currentTile, x, y);
@@ -116,6 +118,18 @@ class Display {
       this._tileSize, // target width
       this._tileSize // target height
     );
+  }
+
+  displayScore(score) {
+    this.buffer.font = '48px Bungee Outline';
+    this.buffer.fillStyle = '#fff';
+    const margin = 10;
+    const offset = 5;
+    const coinSize = this._tileSize/2;
+    const coinX = margin;
+    const coinY = 50 - coinSize - 1;
+    this.buffer.fillText(`× ${score}`, coinSize + coinX + offset, 50);
+    this._drawCoin(coinX, coinY, coinSize);
   }
 
   render() {

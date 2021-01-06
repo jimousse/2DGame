@@ -192,7 +192,10 @@ class Game {
 
 	foundCoin() {
 		this.player.coinsCollected++;
-		console.log(`I have ${this.player.coinsCollected} coins!`);
+	}
+
+	getScore() {
+		return this.player.coinsCollected;
 	}
 
 	_handleSpeech(npcIndex) {

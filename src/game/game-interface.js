@@ -65,6 +65,7 @@ export class GameInterface {
     this._display.drawMap(0);
     this._display.drawCharacters(this._game.getCharactersDisplayInfo());
     this._display.drawMap(1);
+    this._display.displayScore(this._game.getScore());
     this._display.render();
   }
 

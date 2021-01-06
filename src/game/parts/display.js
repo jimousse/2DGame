@@ -121,7 +121,7 @@ class Display {
   }
 
   displayScore(score) {
-    this.buffer.font = '48px Bungee Outline';
+    this.buffer.font = '48px Bungee Inline';
     this.buffer.fillStyle = '#fff';
     const margin = 10;
     const offset = 5;

@@ -2,7 +2,7 @@
 This is a simple tile-based game concept made in JavaScript using HTML5 `<canvas>`.
 
 ## Demo
-Demo: https://jimousse.github.io/2DGame/
+https://jimousse.github.io/2DGame/
 
 ## What I used
 I used [LitElement](https://lit-element.polymer-project.org/) to create 
@@ -17,4 +17,5 @@ What runs in the canvas is made only with Javascript using ES6 features.
 I designed all that using GIMP. The character is based on me 😛.
 ### The coins
 I used https://opengameart.org/content/rotating-coin
+
 Credit to https://opengameart.org/users/puddin

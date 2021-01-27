@@ -1,25 +1,49 @@
 import { LitElement, html, css } from 'lit-element';
 import { GameInterface } from '../game/game-interface.js';
 import { KEYS } from './constants';
+import "@babel/polyfill";
+
+
+
+const waitForFont = async () => {
+	const testString = 'Hello';
+	const expectedRoundedWidth = 42;
+	return new Promise(resolve => {
+		const measuringCanvas = document.getElementById('measuring-canvas');
+		const ctx = measuringCanvas.getContext('2d');
+		ctx.font = '12px Bungee Inline';
+		let width = ctx.measureText(testString).width;
+		let count = 0;
+		const intervalId = setInterval(() => {
+			count++;
+			console.log(width, count);
+			if (count > 10 || Math.floor(width) === expectedRoundedWidth) {
+				clearInterval(intervalId);
+				resolve();
+			}
+		}, 10);
+	});
+}
+
 class CoolGame extends LitElement {
 	constructor() {
 		super();
 		this._controllerClickHandlers = {
 			right: {
-				mouseDown: () => { this.gameInterface.playerGoRight();},
-				mouseUp: () => { this.gameInterface.playerStop();}
+				mouseDown: () => { this.gameInterface.playerGoRight(); },
+				mouseUp: () => { this.gameInterface.playerStop(); }
 			},
 			left: {
-				mouseDown: () => { this.gameInterface.playerGoLeft();},
-				mouseUp: () => { this.gameInterface.playerStop();}
+				mouseDown: () => { this.gameInterface.playerGoLeft(); },
+				mouseUp: () => { this.gameInterface.playerStop(); }
 			},
 			up: {
-				mouseDown: () => { this.gameInterface.playerGoUp();},
-				mouseUp: () => { this.gameInterface.playerStop();}
+				mouseDown: () => { this.gameInterface.playerGoUp(); },
+				mouseUp: () => { this.gameInterface.playerStop(); }
 			},
 			down: {
-				mouseDown: () => { this.gameInterface.playerGoDown();},
-				mouseUp: () => { this.gameInterface.playerStop();}
+				mouseDown: () => { this.gameInterface.playerGoDown(); },
+				mouseUp: () => { this.gameInterface.playerStop(); }
 			}
 		};
 		this._showSpeechDialog = false;
@@ -66,21 +90,21 @@ class CoolGame extends LitElement {
 		window.addEventListener('keydown', ({ key }) => {
 			switch (key) {
 				case KEYS.ARROW_LEFT:
-				this.gameInterface.playerGoLeft();
+					this.gameInterface.playerGoLeft();
 					break;
 				case KEYS.ARROW_UP:
-				this.gameInterface.playerGoUp();
+					this.gameInterface.playerGoUp();
 					break;
 				case KEYS.ARROW_RIGHT:
-				this.gameInterface.playerGoRight();
+					this.gameInterface.playerGoRight();
 					break;
 				case KEYS.ARROW_DOWN:
-				this.gameInterface.playerGoDown();
+					this.gameInterface.playerGoDown();
 					break;
 			}
 		});
 		window.addEventListener('keyup', ({ key }) => {
-			const directionalKeys = [ KEYS.ARROW_LEFT, KEYS.ARROW_RIGHT, KEYS.ARROW_UP, KEYS.ARROW_DOWN ];
+			const directionalKeys = [KEYS.ARROW_LEFT, KEYS.ARROW_RIGHT, KEYS.ARROW_UP, KEYS.ARROW_DOWN];
 			if (directionalKeys.indexOf(key) >= 0) {
 				this.gameInterface.playerStop();
 			}
@@ -96,17 +120,18 @@ class CoolGame extends LitElement {
 	}
 
 	_canvasResize() {
-		this._canvas.width  = this._canvas.offsetWidth;
+		this._canvas.width = this._canvas.offsetWidth;
 		this._canvas.height = this._canvas.offsetHeight;
 	}
 
-	updated() {
+	async updated() {
 		if (!this._canvas) {
 			this._canvas = this.shadowRoot.getElementById('game-canvas');
 			this._canvasResize();
 		}
 		if (!this.gameInterface) {
 			this.gameInterface = new GameInterface(this._canvas);
+			await waitForFont();
 			this.gameInterface.start();
 		}
 	}
@@ -120,11 +145,10 @@ class CoolGame extends LitElement {
 					.clickHandlers=${this._controllerClickHandlers}>
 				</virtual-controller>
 				${this._showSpeechDialog ?
-					html`<text-dialog
+				html`<text-dialog
 						id="speech-bubble"
 						text=${this._text}
 						name=${this._name} />` : null}
-
 			</div>
 		`;
 	}

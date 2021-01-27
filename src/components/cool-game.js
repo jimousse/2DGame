@@ -1,29 +1,7 @@
 import { LitElement, html, css } from 'lit-element';
 import { GameInterface } from '../game/game-interface.js';
 import { KEYS } from './constants';
-import "@babel/polyfill";
 
-
-
-const waitForFont = async () => {
-	const testString = 'Hello';
-	const expectedRoundedWidth = 42;
-	return new Promise(resolve => {
-		const measuringCanvas = document.getElementById('measuring-canvas');
-		const ctx = measuringCanvas.getContext('2d');
-		ctx.font = '12px Bungee Inline';
-		let width = ctx.measureText(testString).width;
-		let count = 0;
-		const intervalId = setInterval(() => {
-			count++;
-			console.log(width, count);
-			if (count > 10 || Math.floor(width) === expectedRoundedWidth) {
-				clearInterval(intervalId);
-				resolve();
-			}
-		}, 10);
-	});
-}
 
 class CoolGame extends LitElement {
 	constructor() {
@@ -124,14 +102,13 @@ class CoolGame extends LitElement {
 		this._canvas.height = this._canvas.offsetHeight;
 	}
 
-	async updated() {
+	updated() {
 		if (!this._canvas) {
 			this._canvas = this.shadowRoot.getElementById('game-canvas');
 			this._canvasResize();
 		}
 		if (!this.gameInterface) {
 			this.gameInterface = new GameInterface(this._canvas);
-			await waitForFont();
 			this.gameInterface.start();
 		}
 	}

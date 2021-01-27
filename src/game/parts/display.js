@@ -1,6 +1,9 @@
 import MovingElement from './moving-element.js';
 import { OCEAN, COIN } from './asset-info.js';
 
+const testString = 'Hello';
+const expectedWithWithFont = 169;
+
 class Display {
   constructor(canvas, map, camera, canvasWidth, canvasHeight) {
     this.context = canvas.getContext('2d');
@@ -18,8 +21,8 @@ class Display {
    * @param {*} height
    */
   _createBufferCanvas(width, height) {
-    this.buffer  = document.createElement('canvas').getContext('2d'),
-    this.buffer.canvas.width = width;
+    this.buffer = document.createElement('canvas').getContext('2d'),
+      this.buffer.canvas.width = width;
     this.buffer.canvas.height = height;
   }
 
@@ -94,8 +97,8 @@ class Display {
             this._drawOcean(x, y);
             break;
           case this._map.uniqueKeys.coin:
-            const _x = this._tileSize/2 - this._coin.size/2 + x;
-            const _y = this._tileSize/2 - this._coin.size/2 + y;
+            const _x = this._tileSize / 2 - this._coin.size / 2 + x;
+            const _y = this._tileSize / 2 - this._coin.size / 2 + y;
             this._drawCoin(_x, _y);
             break;
           default:
@@ -123,9 +126,12 @@ class Display {
   displayScore(score) {
     this.buffer.font = '48px Bungee Inline';
     this.buffer.fillStyle = '#fff';
+    if (Math.floor(this.buffer.measureText(testString).width) !== expectedWithWithFont) {
+      return;
+    }
     const margin = 10;
     const offset = 5;
-    const coinSize = this._tileSize/2;
+    const coinSize = this._tileSize / 2;
     const coinX = margin;
     const coinY = 50 - coinSize - 1;
     this.buffer.fillText(`× ${score}`, coinSize + coinX + offset, 50);

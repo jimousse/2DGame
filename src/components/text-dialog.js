@@ -3,7 +3,7 @@ import { LitElement, html, css, unsafeCSS } from 'lit-element';
 
 const PADDING = 30;
 const FONT_SIZE = 45;
-const FONT_FAMILY = 'Arial';
+const FONT_FAMILY = 'monospace';
 
 class TextDialog extends LitElement {
 
@@ -72,7 +72,7 @@ class TextDialog extends LitElement {
         left: 7%;
         z-index: 1;
         color: #662616;
-        font-size: ${unsafeCSS(`${FONT_SIZE/2}px`)};
+        font-size: ${unsafeCSS(`${FONT_SIZE / 2}px`)};
         border-radius: 20px;
         background: #d68033;
         padding: 5px 10px 5px 10px;
